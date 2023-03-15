@@ -50,12 +50,35 @@ branch: main
 	
 > git push origin <branch>
 > git push
-	uploads all commited modifications to github
+	uploads all commited modifications to github into the <branch>
 	* notice that after the first time using [git push origin <branch>]
 	* for the subsequent calls we can use only [git push]
 	* but only for cloned git projects, otherwise we can configure to work 
 	* as well with the command:
 	> git config --add --bool push.autoSetupRemote true
+	
+> git branch
+	list the branchs for the current git project
+	the current branch is marked with the preffix (*)
+	
+> git branch <new-branch>
+	creates a new branch with the name of <new-branch>
+	
+> git checkout <branch>
+> git checkout -b <branch>
+	exit from the context of the current branch and enter the <branch>
+	if the branch does not exist using the [-b] option creates one
+	*notice that <branch> must already exist
+	*example: [git checkout AI] - exit from main and enter IA (context)
+	*context means that now all the commands will update/change the current branch
+	
+> git merge <branch>
+	merges/fuses/unite the current branch with <branch>
+	*we can get the current branch using [git branch]
+	
+> git pull
+	download all new changes in the github repository into the current git project
+
 
 
 
