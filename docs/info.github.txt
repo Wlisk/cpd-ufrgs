@@ -9,13 +9,15 @@ https://www.youtube.com/playlist?list=PLlAbYrWSYTiPA2iEiQ2PF_A9j__C4hi0A
 # playlist sobre tópicos de git e github
 https://www.youtube.com/playlist?list=PLylCwvNCtoanYEIC4OBMO2hfB-ihCSv9Y
 
+# Follow this tutorial to initialise a new github project from a local existing project
 https://docs.github.com/en/migrations/importing-source-code/using-the-command-line-to-import-source-code/adding-locally-hosted-code-to-github
 
 
 USING GIT:
 project repository: git@github.com:Wlisk/cpd-ufrgs.git
+branch: main
 
-> git init
+> git init -b <branch>
 	initializes a folder as a git project
 	*if first time and project not exists or not on github already
 	
@@ -47,8 +49,10 @@ project repository: git@github.com:Wlisk/cpd-ufrgs.git
 	project in github
 	
 > git push origin <branch>
+> git push
 	uploads all commited modifications to github
-	*branch: main
+	* notice that after the first time using [git push origin <branch>]
+	* for the subsequent calls que cal use only [git push]
 
 
 
