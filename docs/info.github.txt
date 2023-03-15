@@ -52,7 +52,10 @@ branch: main
 > git push
 	uploads all commited modifications to github
 	* notice that after the first time using [git push origin <branch>]
-	* for the subsequent calls que cal use only [git push]
+	* for the subsequent calls we can use only [git push]
+	* but only for cloned git projects, otherwise we can configure to work 
+	* as well with the command:
+	> git config --add --bool push.autoSetupRemote true
 
 
 
