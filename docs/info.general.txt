@@ -1,0 +1,9 @@
+# https://stackoverflow.com/questions/57977099/read-csv-with-json-feature
+information about how to work with json strings inside a csv file unsing pandas
+
+# https://realpython.com/python-csv/
+how to read a csv file 
+
+# movies dataset
+https://www.imdb.com/interfaces/
+https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset?resource=download&select=movies_metadata.csv

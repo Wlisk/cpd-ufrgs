@@ -1,0 +1,56 @@
+# signed commits with:
+git commit -S -m "message"
+
+# git e github para iniciantes
+# lista de tutoriais curtos sobre como usar o git e como gerenciar arquivos no gituhub
+https://www.youtube.com/playlist?list=PLlAbYrWSYTiPA2iEiQ2PF_A9j__C4hi0A
+
+# Git e Github
+# playlist sobre tópicos de git e github
+https://www.youtube.com/playlist?list=PLylCwvNCtoanYEIC4OBMO2hfB-ihCSv9Y
+
+https://docs.github.com/en/migrations/importing-source-code/using-the-command-line-to-import-source-code/adding-locally-hosted-code-to-github
+
+
+USING GIT:
+project repository: git@github.com:Wlisk/cpd-ufrgs.git
+
+> git init
+	initializes a folder as a git project
+	*if first time and project not exists or not on github already
+	
+> git status
+	get info about the status of the git project from the current folder (branch, commits, 
+	files/folders added/not added)
+
+> git add <file>
+	add the file/folder to be proccessed
+	we can use the wildcard (*) to proccess all files of the main folder or specific folder
+	
+> git commit
+> git commit -m "message"
+	proccess all the files that were added, and add then as new version into the branch 
+	
+> git restore <file>
+	restore a file to the last commited version and discard changes 
+	*notice that it works only for not added files
+
+> git clone <repository>
+	copies/clone the repository folder (all files included) into the current folder
+	
+> git remote add origin <repository>
+	links a local project to a github project (cloud)
+	*notice that clonig through SSH a repository removes the need of this command
+	
+> git remote -v
+	verifies the status of the link between the local git project and the hosted 
+	project in github
+	
+> git push origin <branch>
+	uploads all commited modifications to github
+	*branch: main
+
+
+
+
+

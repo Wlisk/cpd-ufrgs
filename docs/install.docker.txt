@@ -1,0 +1,18 @@
+# installing docker:
+https://docs.docker.com/get-docker/
+
+# info about the python containers available and general recommendations
+https://hub.docker.com/_/python
+
+# download python container on Docker Desktop
+	> go to "Search for local and remote images..." at the upper corner of the application or use the shortuct [ctrl+k]: it will open a window
+	> search for "python" and click in the first selection with the python image and the certificate of docker official image
+	> in the panel below (with info about the container selected) click in "tag" where there is a selection button
+	> select "slim-bullseye"
+	> then click the button "pull" (button right beside the button "tag"), it will downloads the python container with the version selected
+	> The container image will be shown in the "Images" section of Docker Desktop
+
+
+
+
+

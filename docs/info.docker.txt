@@ -1,0 +1,13 @@
+
+
+
+# Docker For Beginners: From Docker Desktop to Deployment
+https://www.youtube.com/watch?v=i7ABlHngi1Q
+
+
+# docker compose
+https://www.cloudbees.com/blog/using-docker-compose-for-python-development
+https://docs.docker.com/compose/compose-file/
+
+# run apps on docker
+https://towardsdatascience.com/how-to-run-a-python-script-using-a-docker-container-ea248e618e32
