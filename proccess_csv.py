@@ -38,12 +38,15 @@ movies_matadata_format = [
     'vote_average',             # rating - (decimal = 0.0 to 10.0)
     'vote_count'                # (integer)
 ]
+
 MIN_VOTES = 6.5
+MIN_VOTE_COUNT = 100
 
 # used to skip a row if the conditions are met 
 filters =  {
     'adult': lambda value: value and value == 'True',
-    'vote_average': lambda value: value and float(value) <= MIN_VOTES 
+    'vote_average': lambda value: value and float(value) <= MIN_VOTES,
+    'vote_count': lambda value: value and int(value) >= MIN_VOTE_COUNT
 }
 
 # ignore (not add) columns to the final table
@@ -56,8 +59,6 @@ ignore_columns = [
     'production_countries',
     'video'
 ]
-
-
 
 with open(csvfilename, 'r') as csvrfile:
     with open(csvwritefile, 'w') as csvwfile:

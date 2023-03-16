@@ -1,0 +1,27 @@
+*int_64 = 8 bytes
+*int_16 = 2 bytes
+*float = ? bytes
+
+# Tabela Filmes
+id: int_64
+release_date: int_16
+runtime: int_16
+title: int_64
+vote_average: float
+
+# Tabela Titulos
+id: int_64
+
+# Tabela Generos
+id: int_16
+name: char[50]
+
+
+
+
+
+
+
+
+
+
