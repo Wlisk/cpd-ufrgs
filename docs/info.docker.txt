@@ -29,7 +29,12 @@ COMMANDS
 > docker exec -it <container_id> /bin/bash
 	access the terminal of a running docker container
 	
-
+> docker compose up
+	build and run a project creating a docker container
+	[-d] option runs the container outside of the scope of the current terminal (non blocking)
+	
+> docker start <container-name>
+	runs an already created container
 
 
 
