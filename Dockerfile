@@ -1,8 +1,9 @@
-FROM python:3
+FROM python:slim-bullseye
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # install external python modules 
+# use [pip freeze > requirements.txt] to get all external modules into a single file
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 

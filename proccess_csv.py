@@ -38,7 +38,7 @@ movies_matadata_format = [
     'vote_average',             # rating - (decimal = 0.0 to 10.0)
     'vote_count'                # (integer)
 ]
-MIN_VOTES = 5.0
+MIN_VOTES = 6.0
 
 # used to skip a row if the conditions are met 
 filters =  {

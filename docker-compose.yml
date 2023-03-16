@@ -1,8 +1,6 @@
-version: 3
+version: "3.7"
 services:
   app:
     build: .
-    stdin_open: true
-    tty: true
     volumes:
-      - ./datasets
+      - .:/app

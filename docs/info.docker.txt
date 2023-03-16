@@ -11,3 +11,41 @@ https://docs.docker.com/compose/compose-file/
 
 # run apps on docker
 https://towardsdatascience.com/how-to-run-a-python-script-using-a-docker-container-ea248e618e32
+
+COMMANDS
+> docker logs -f <container_id>
+	shows all terminal output from the container runnning (live watch) or already closed
+	
+> docker images
+> docker image ls
+	list all downloaded images
+	[--all] option list all intermediate images as well
+	
+> docker ps
+> docker container ls
+	list all containers running
+	[-a] option includes not running containers
+	
+> docker exec -it <container_id> /bin/bash
+	access the terminal of a running docker container
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
