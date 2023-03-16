@@ -2,26 +2,51 @@
 *int_16 = 2 bytes
 *float = ? bytes
 
-# Tabela Filmes
+################################################################################3
+#            TABLES
+
+# Table Movies
 id: int_64
 release_date: int_16
 runtime: int_16
 title: int_64
 vote_average: float
 
-# Tabela Titulos
+# Table Titles
 id: int_64
+movie_id: int_64
+name: char[150]
 
-# Tabela Generos
+# Table Genres
 id: int_16
-name: char[50]
+name: char[20]
+
+# Table Countries
+id: int_16
+name: char[20]
+
+# Table Companies
+id: int_16
+name: char[30]
 
 
+################################################################################3
+#            RELATIONSHIPS
 
+# Table Movies-Countries
+id_movie: int_64
+id_country: int_16
 
+# Table Movies-Genres
+id_movie: int_64
+id_genre: int_16
 
+# Table Movies-Companies
+id_movie: int_64
+id_companie: int_16
 
+#? Table Movies-Years
 
-
+#? Table Movies
 
 

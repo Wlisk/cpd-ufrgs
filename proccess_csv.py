@@ -39,14 +39,16 @@ movies_matadata_format = [
     'vote_count'                # (integer)
 ]
 
-MIN_VOTES = 6.5
-MIN_VOTE_COUNT = 100
+MIN_VOTES = 6.0
+MIN_VOTE_COUNT = 10
+MAX_TITLE_SIZE = 150 - 1
 
 # used to skip a row if the conditions are met 
 filters =  {
     'adult': lambda value: value and value == 'True',
     'vote_average': lambda value: value and float(value) <= MIN_VOTES,
-    'vote_count': lambda value: value and int(value) >= MIN_VOTE_COUNT
+    'vote_count': lambda value: value and int(value) <= MIN_VOTE_COUNT,
+    'title': lambda value: value and len(value) >= MAX_TITLE_SIZE
 }
 
 # ignore (not add) columns to the final table

@@ -1,0 +1,3 @@
+[] criar uma função genérica que verifica em uma entidade (tabela) se existe ou não um item buscado, caso contrário adiciona na entidade como novo elemento de forma sequencial.
+
+[] 

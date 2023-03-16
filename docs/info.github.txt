@@ -48,7 +48,7 @@ branch: main
 	verifies the status of the link between the local git project and the hosted 
 	project in github
 	
-> git push origin <branch>
+> git push -u origin <branch>
 > git push
 	uploads all commited modifications to github into the <branch>
 	* notice that after the first time using [git push origin <branch>]
