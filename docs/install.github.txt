@@ -26,10 +26,10 @@ https://docs.github.com/en/authentication/managing-commit-signature-verification
 		create a new file on the git project folder
 	2> git config gpg.ssh.allowedSignersFile "$(pwd)/allowed_signers"
 		configure the signature on the current working direcoty [$(pwd)]
-	3> echo "$(git config --get user.email) namespaces=\"git\" $(cat ~/.ssh/<MY_KEY>.pub)" >> ~/.ssh/allowed_signers
+	3> echo "$(git config --get user.email) namespaces=\"git\" $(cat ~/.ssh/id_ed25519.pub)" >> ~/.ssh/allowed_signers
 		write and save the signature into the folder of ssh keys
-		change <MY_KEY> for the name of your public SSH key connect with github
-	4> add the content of <MY_KEY> as signing key to github 
+		change id_ed25519 for the name of your public SSH key connect with github
+	4> add the content of id_ed25519 as signing key to github 
 	   https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account
 	
 
