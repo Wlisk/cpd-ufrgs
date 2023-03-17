@@ -6,7 +6,10 @@ from scripts import generate_entities as ge
 
 movies_file = 'datasets/movies.csv'
 
-entityfile_companies = 'data/companies.bin'
+file_companies = 'data/companies.bin'
+file_titles = 'data/titles.bin'
+file_genres = 'data/genres.bin'
+file_countries = 'data/countries.bin'
 
 with open(movies_file, 'r') as csvrfile:
     # initializes the csv proccessor
@@ -21,6 +24,9 @@ with open(movies_file, 'r') as csvrfile:
         if i >= n: break
         i += 1
 
-        ge.add_to_entity_companies(movie['production_companies'])
+        ge.add_to_entity_companies( \
+            file_companies, \
+            movie['production_companies'] \
+        )
 
         print(movie)
