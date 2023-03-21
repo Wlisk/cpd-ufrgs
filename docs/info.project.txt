@@ -1,20 +1,21 @@
 *int_64 = 8 bytes
+*int_32 = 4 bytes
 *int_16 = 2 bytes
-*float = ? bytes
+*float = 4 bytes
 
 ################################################################################3
 #            TABLES
 
 # Table Movies
-id: int_64
+id: int_32
 release_date: int_16
 runtime: int_16
-title: int_64
+title: int_32
 vote_average: float
 
 # Table Titles
-id: int_64
-movie_id: int_64
+id: int_32
+movie_id: int_32
 name: char[150]
 
 # Table Genres
@@ -34,15 +35,15 @@ name: char[30]
 #            RELATIONSHIPS
 
 # Table Movies-Countries
-id_movie: int_64
+id_movie: int_32
 id_country: int_16
 
 # Table Movies-Genres
-id_movie: int_64
+id_movie: int_32
 id_genre: int_16
 
 # Table Movies-Companies
-id_movie: int_64
+id_movie: int_32
 id_companie: int_16
 
 #? Table Movies-Years
@@ -50,3 +51,5 @@ id_companie: int_16
 #? Table Movies
 
 
+# INFO ABOUT struct AND HOW TO WORK WITH DATA SIZE
+https://docs.python.org/3/library/struct.html

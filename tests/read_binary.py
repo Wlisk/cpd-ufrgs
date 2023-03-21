@@ -18,7 +18,6 @@ while row := f.read(offset):
     # as there is no more genres to read
     if len(row) < offset: break
     
-    #print( struct.unpack('<H18s', row) )
     genre = Genre._make( struct.unpack('<H18s', row) )
 
     # if id is equal 0, it means there is no more valid genres to read
@@ -29,3 +28,5 @@ while row := f.read(offset):
 f.close()
 
 print(genres)
+
+# block_size % item_size = items_per_block

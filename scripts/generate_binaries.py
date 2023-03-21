@@ -1,19 +1,29 @@
 #!/usr/bin/python
 
 import csv
+import struct
 from scripts import generate_entities as ge
 
 movies_file = 'datasets/movies.csv'
 
+# string float char u16 u32 u64
+#   Ns     f    B    H   I   Q  -> unsigned, N is the length of the string
+#               b    h   i   q  -> for signed
+# '<' if for little endian format
+
+# all entitie files have a header with the quantity of items in then and a offset to the end of the file
+# num_items:u32, end_of_file:u64
+header = '<IQ'
+
 class EntityInfo:
-    def __init__(self, file, struct_size):
+    def __init__(self, file, struct_size_format):
         self.file = file
-        self.struct_size = struct_size
+        self.struct_size = struct.calcsize(struct_size_format)
 
 entity = {
     'companies':    EntityInfo('data/companies.bin',    0),
     'titles':       EntityInfo('data/titles.bin',       0),
-    'genres':       EntityInfo('data/genres.bin',       0),
+    'genres':       EntityInfo('data/genres.bin',       '<H20s'),
     'countries':    EntityInfo('data/countries.bin',    0),
     'movies':       EntityInfo('data/movies.bin',       0)
 }
