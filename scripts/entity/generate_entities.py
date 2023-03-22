@@ -1,4 +1,5 @@
 import struct
+from scripts.entity.entity_info import EntityInfo
 
 NOT_FOUND = -1
 
@@ -13,8 +14,10 @@ def write_into_entity(entity_file, item_to_add):
     pass
 
 # table companies
-def add_to_companies(entity_filename, items):
-    with open(entity_filename, 'rb+') as entity_file:
+def add_to_companies(entity: EntityInfo, movie):
+    items = movie[entity.from_column]
+
+    with open(entity.filename, 'rb+') as entity_file:
         for item in items:
             found = search_in_entity(entity_file, item)
             
@@ -25,7 +28,7 @@ def add_to_companies(entity_filename, items):
             write_into_entity(entity_file, item)
 
 # table titles
-def add_to_titles(entity_filename, item):
+def add_to_titles(entity: EntityInfo, item):
     pass
 
 # table genres
