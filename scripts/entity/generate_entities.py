@@ -14,7 +14,7 @@ def write_into_entity(entity_file, item_to_add):
     pass
 
 # table companies
-def add_to_companies(entity: EntityInfo, movie):
+def add_to_companies(entity: EntityInfo, movie: dict[str, str | None]):
     items = movie[entity.from_column]
 
     with open(entity.filename, 'rb+') as entity_file:
@@ -44,7 +44,7 @@ def add_to_movies(entity_filename, item):
     pass
 
 
-add_to_entity = {
+add_to_entity: dict[str, function] = {
     'companies':    add_to_companies,
     'titles':       add_to_titles,
     'genres':       add_to_genres,
