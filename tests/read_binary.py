@@ -11,12 +11,6 @@ from io import BufferedReader
 import struct
 from scripts.entity.entity_info import EntityInfo, ENTITY, HEADER
 
-f = open('genres.test.bin', 'rb')
-
-struct_size = ENTITY['genres'].struct_size
-Genre = ENTITY['genres'].namedtuple
-genres = {}
-
 def read_entity_header(entity_file: BufferedReader) -> namedtuple: 
     # guarantees that it's at the init of the file
     entity_file.seek(0)
@@ -26,8 +20,6 @@ def read_entity_header(entity_file: BufferedReader) -> namedtuple:
     return HEADER.namedtuple._make( \
         struct.unpack(HEADER.struct_format, header_data) \
     )
-
-print(read_entity_header(f))
 
 def read_entity_data(entity_file: BufferedReader, entity: EntityInfo) -> namedtuple:
     # points to the first byte after the header structure
@@ -42,34 +34,22 @@ def read_entity_data(entity_file: BufferedReader, entity: EntityInfo) -> namedtu
             struct.unpack(entity.struct_format, e) \
         )
 
+        # if id is equal 0, it means there is no more valid data to read
         if data.id == 0: break
 
+        # returns a generator for the data read
         yield data
 
+f = open('genres.test.bin', 'rb')
+
+print(read_entity_header(f))
+
 for e in read_entity_data(f, ENTITY['genres']):
-    print(e)
+    # string must be cleaned up with:
+    name = str(e.name, 'UTF-8').replace('\x00','')
 
-
-def t():
-    while row := f.read(struct_size):
-
-        # < is for little-endian architecture configuration
-        # H is for unsigned short (2 bytes)
-        # 18s is for char[18] (18 bytes)
-
-        # if end of file or cannot read offset bytes further then exit loop
-        # as there is no more entity data to read
-        if len(row) < struct_size: break
-        
-        genre = Genre._make( struct.unpack('<H20s', row) )
-
-        # if id is equal 0, it means there is no more valid genres to read
-        if genre.id == 0: break
-
-        genres[genre.id] = str(genre.name, 'UTF-8').replace('\x00','')
+    print(f'id: {e.id} - {name}')
 
 f.close()
-
-#print(genres)
 
 # block_size % item_size = items_per_block
