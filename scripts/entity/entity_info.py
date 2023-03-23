@@ -1,5 +1,6 @@
 import struct
 from collections import namedtuple
+from typing import NamedTuple
 
 # string float char u16 u32 u64
 #   Ns     f    B    H   I   Q  -> unsigned, N is the length of the string
@@ -9,6 +10,7 @@ from collections import namedtuple
 # all entitie files have a header with the quantity of items in them, the size occupied in bytes for each item and a offset to the end of the items in the file
 # num_items:u32, item_size:u16, end_of_file:u64 = 'IHQ'
 
+# object to hold information about an entity
 class EntityInfo:
     def __init__(self, name: str, struct_size_format: str, from_column: str, columns: list):
         self.name = name
@@ -17,6 +19,18 @@ class EntityInfo:
         self.from_column = from_column
         self.namedtuple = namedtuple(name.capitalize(), columns)
         self.struct_format = f'<{struct_size_format}'
+
+# types to give intelisense with namedtuple
+class EntityTuple(NamedTuple):
+    id: int
+    name: str
+class TitleTuple(EntityTuple):
+    movie_id: int
+class MovieTuple(NamedTuple):
+    id: int
+    title_id: int
+# alias to incompass all created namedtuple types
+BaseTuple = EntityTuple | TitleTuple | MovieTuple
 
 HEADER = EntityInfo( \
     'header', \
