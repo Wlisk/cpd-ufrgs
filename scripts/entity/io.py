@@ -69,3 +69,13 @@ def search_data(entity_file: BufferedReader, entity: EntityInfo, search_value: s
         if compare_fn(e, search_value): 
             return (entity_file.tell() - entity.struct_size)
     return NOT_FOUND
+
+# COMPARE FUNCTIONS
+def search_by_id(e: BaseTuple, v: int): return e.id == v
+def search_by_name(e: BaseTuple, v: str): return e.name == v
+
+# converts a string of bytes into python string
+def cleanup_str(data: bytes) -> str:
+    # split at the first '\0' 
+    # and return the first splited part converted as string
+    return ( data.split(b'\0', 1)[0] ).decode('utf-8')
