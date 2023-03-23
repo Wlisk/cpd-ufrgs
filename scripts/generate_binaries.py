@@ -21,22 +21,7 @@ with open(movies_file, 'r') as csvrfile:
         if i >= n: break
         i += 1
 
-        #for entity in entities:
-        #    add_to_entity[entity](ENTITY[entity], movie)
-
-        # tries to add a data to an entity (companies)
-        add_to_entity['companies'](ENTITY['companies'], movie)
-
-        # tries to add a data to an entity (titles)
-        add_to_entity['titles'](ENTITY['titles'], movie)
-
-        # tries to add a data to an entity (genres)
-        add_to_entity['genres'](ENTITY['genres'], movie)
-
-        # tries to add a data to an entity (countries)
-        add_to_entity['countries'](ENTITY['countries'], movie)
-
-        # tries to add a data to an entity (movies)
-        add_to_entity['movies'](ENTITY['movies'], movie)
+        for entity in entities:
+            add_to_entity(entity, movie)
 
         print(movie)
