@@ -18,6 +18,13 @@ class EntityInfo:
         self.namedtuple = namedtuple(name.capitalize(), columns)
         self.struct_format = f'<{struct_size_format}'
 
+HEADER = EntityInfo( \
+    'header', \
+    'IHQ', \
+    '', \
+    ['num_items', 'item_size', 'end_of_file'] \
+)
+
 ENTITY = {
     'companies': EntityInfo( \
         'companies', \
@@ -45,8 +52,8 @@ ENTITY = {
     ),
     'movies': EntityInfo( \
         'movies', \
+        'II', \
         '', \
-        '', \
-        [] \
+        ['id', 'title_id'] \
     )
 }

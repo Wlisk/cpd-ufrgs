@@ -1,31 +1,53 @@
-import struct
-from collections import namedtuple
-from scripts.entity.entity_info import EntityInfo, ENTITY
+#!/usr/bin/python
 
-f = open('genres.bin', 'rb')
+# configure module imports for user created modules outside the scope
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# importing types
+from collections import namedtuple
+from io import BufferedReader
+
+import struct
+from scripts.entity.entity_info import EntityInfo, ENTITY, HEADER
+
+f = open('genres.test.bin', 'rb')
 
 struct_size = ENTITY['genres'].struct_size
 Genre = ENTITY['genres'].namedtuple
 genres = {}
 
-header = EntityInfo( \
-    'header', \
-    'IHQ', \
-    '', \
-    ['num_items', 'item_size', 'end_of_file'] \
-)
-
-def read_entity_header(entity_file) -> namedtuple: 
+def read_entity_header(entity_file: BufferedReader) -> namedtuple: 
     # guarantees that it's at the init of the file
     entity_file.seek(0)
     # read the header structure data
-    header_data = entity_file.read(header.struct_size)
+    header_data = entity_file.read(HEADER.struct_size)
     # generate and return a namedtuple with the data readed within
-    return header.namedtuple._make( \
-        struct.unpack(header.struct_format, header_data) \
+    return HEADER.namedtuple._make( \
+        struct.unpack(HEADER.struct_format, header_data) \
     )
 
 print(read_entity_header(f))
+
+def read_entity_data(entity_file: BufferedReader, entity: EntityInfo) -> namedtuple:
+    # points to the first byte after the header structure
+    entity_file.seek(HEADER.struct_size)
+
+    while e := entity_file.read(entity.struct_size):
+        # if end of file or cannot read offset bytes further then exit loop
+        # as there is no more entity data to read
+        if len(e) < entity.struct_size: break
+
+        data = entity.namedtuple._make( \
+            struct.unpack(entity.struct_format, e) \
+        )
+
+        if data.id == 0: break
+
+        yield data
+
+for e in read_entity_data(f, ENTITY['genres']):
+    print(e)
 
 
 def t():
@@ -36,7 +58,7 @@ def t():
         # 18s is for char[18] (18 bytes)
 
         # if end of file or cannot read offset bytes further then exit loop
-        # as there is no more genres to read
+        # as there is no more entity data to read
         if len(row) < struct_size: break
         
         genre = Genre._make( struct.unpack('<H20s', row) )
