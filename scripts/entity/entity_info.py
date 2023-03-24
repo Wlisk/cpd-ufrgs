@@ -29,6 +29,10 @@ class TitleTuple(EntityTuple):
 class MovieTuple(NamedTuple):
     id: int
     title_id: int
+class HeaderTuple(NamedTuple):
+    num_items: int
+    item_size: int
+    end_of_file: int
 # alias to incompass all created namedtuple types
 BaseTuple = EntityTuple | TitleTuple | MovieTuple
 

@@ -1,7 +1,6 @@
 import struct
-from scripts.entity.entity_info import EntityInfo
-
-NOT_FOUND = -1
+from scripts.entity.entity_info import ENTITY, EntityInfo
+from scripts.utils import NOT_FOUND
 
 # realize a search in the entity file for the given item
 # returns the item id if found or NOT_FOUND otherwise
@@ -14,7 +13,7 @@ def write_into_entity(entity_file, item_to_add):
     pass
 
 # table of entities [ Companies, Titles, Genres, Countries and Movies]
-def add_to_entity(entity_name, movie: dict[str, str | None]):
+def add_to_entity(entity_name: str, movie: dict[str, str|None]):
     entity = ENTITY[entity_name]
     items = list(movie[entity.from_column])
 

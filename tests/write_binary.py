@@ -10,29 +10,29 @@ from io import BufferedReader
 
 import struct
 from scripts.entity.entity_info \
-    import EntityInfo, ENTITY, HEADER, EntityTuple, BaseTuple
+    import EntityInfo, ENTITY, HEADER, EntityTuple, BaseTuple, HeaderTuple
 from scripts.entity.io import \
     read_header, read_data, read_data_at, read_data_from_index, \
-    search_data
+    search_data, write_to_end, write_at
 
-from scripts.utils import bytes_to_str, str_to_bytes
+from scripts.utils import bytes_to_str, convert_to_bin
 
 f = open('genres.test.bin', 'rb')
 
 #print(read_header(f))
 
-def update_header(entity_file: BufferedReader, entity: EntityInfo):
-    entity_file.seek(0)
 
-    #entity_file.write()
-    return
 
-id, name = read_data_from_index(f, ENTITY['genres'], 1)
+
+
+    
+
+t = read_data_from_index(f, ENTITY['genres'], 1)
+id, name = t
 name = bytes_to_str(name)
 print(id, name)
 
-u = struct.pack(ENTITY['genres'].struct_format, id, str_to_bytes(name))
-print(u)
+print( convert_to_bin(ENTITY['genres'], t) )
 
 
 f.close()

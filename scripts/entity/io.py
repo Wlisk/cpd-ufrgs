@@ -1,14 +1,14 @@
 # importing types
 from io import BufferedReader
 from collections.abc import Callable
-from scripts.entity.entity_info import EntityInfo, BaseTuple
+from scripts.entity.entity_info import EntityInfo, BaseTuple, HeaderTuple
 
 import struct
 from scripts.entity.entity_info import HEADER
-from scripts.utils import NOT_FOUND
+from scripts.utils import NOT_FOUND, convert_to_bin
 
 # read from an entity file its header data
-def read_header(entity_file: BufferedReader) -> BaseTuple: 
+def read_header(entity_file: BufferedReader) -> HeaderTuple: 
     # guarantees that it's at the init of the file
     entity_file.seek(0)
     # read the header structure data
@@ -69,3 +69,34 @@ def search_data(entity_file: BufferedReader, entity: EntityInfo, search_value: s
         if compare_fn(e, search_value): 
             return (entity_file.tell() - entity.struct_size)
     return NOT_FOUND
+
+# write data at some position in the file
+def write_at(entity_file: BufferedReader, entity: EntityInfo, pos: int, data: BaseTuple|dict):
+    # goes to the position where the data must be written
+    entity_file.seek(pos)
+    # converts to a binary packed structure
+    bin = convert_to_bin(entity, data)
+
+    entity_file.write(bin)
+
+# update the header of the file with the new data (overwrite all header section)
+def update_header(entity_file: BufferedReader, data: HeaderTuple|dict):
+    write_at(entity_file, HEADER, 0, data)
+
+# notice that entity_file should be opened in 'rb+' or 'wb+' mode
+def write_to_end(entity_file: BufferedReader, entity: EntityInfo, data: BaseTuple|dict):
+    # gets data from the header of the file first
+    header = read_header(entity_file)
+
+    # with the information, write at the "end" of the file
+    write_at(entity_file, entity, header.end_of_file, data)
+
+    # update the header tuple
+    # order: 'num_items', 'item_size', 'end_of_file'
+    header = header._make([\
+        header.num_items + 1, \
+        header.item_size, \
+        entity_file.tell() \
+    ])
+
+    update_header(entity_file, header)
