@@ -54,7 +54,7 @@ def parse_get_year(v: str) -> int:
     except: return 0
     
 # 
-def parse_get_name(v: str) -> list[str]:
+def parse_get_names(v: str) -> list[str]:
     l = parse_str_to_listdict(v)
     return [item['name'] for item in l]
 

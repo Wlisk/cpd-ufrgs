@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 # type imports
 from typing import Generator 
 from scripts.types import MovieBaseDict

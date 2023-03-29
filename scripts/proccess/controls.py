@@ -2,7 +2,7 @@
 from typing import Callable  
 
 from scripts.utils \
-    import parse_get_name, parse_get_year, parse_int, parse_float
+    import parse_get_names, parse_get_year, parse_int, parse_float
 
 MIN_VOTES = 6.0
 MIN_VOTE_COUNT = 10
@@ -46,10 +46,10 @@ RENAME_COL = {
 }
 
 # parse/modify a data string from the raw movie into a more desirable type
-PROCCESS: dict[str, Callable[[str], int|list[str]]] = {
-    'genres':       parse_get_name,
-    'companies':    parse_get_name,
-    'countries':    parse_get_name,
+PROCCESS: dict[str, Callable[[str], int|float|list[str]]] = {
+    'genres':       parse_get_names,
+    'companies':    parse_get_names,
+    'countries':    parse_get_names,
     'release_year': parse_get_year,
     'id':           parse_int,
     'duration':     parse_float,
