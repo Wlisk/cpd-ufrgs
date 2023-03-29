@@ -1,0 +1,11 @@
+add ast lib and removes json lib because json.dumps() couldn't parse single quote strings and ast.literal_eval() could.
+
+using typing lib, because it provides us complex types to use for type checks. Type check is useful as it provides helpful hints while coding as well as let us known wich types and methods we are dealing at coding time. An IDE like VSCode is needed for type hints.
+
+separate the code in the folders (proccess, binaries and search) to help organize the code in sections and based on the proccess of each section.
+    proccess - holds the code to filter and parse the csv, giving us the data for the movie
+
+    binaries - holds the code to generate entities and relationships based on the movie data
+
+    search - holds the code to search information in the binaries created
+

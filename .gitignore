@@ -1,5 +1,7 @@
 datasets/raw/name.basics.tsv
 datasets/raw/title.principals.tsv
+datasets/raw/cast_info.txt
 datasets/movies.csv
 __pycache__/
 data/
+tests/movies_metadata.csv

@@ -4,6 +4,8 @@
 
 from scripts import generate_binaries
 
+csvfilename = "datasets/raw/movies_metadata.csv"
+
 def main():
     pass
 

@@ -7,3 +7,24 @@ how to read a csv file
 # movies dataset
 https://www.imdb.com/interfaces/
 https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset?resource=download&select=movies_metadata.csv
+
+https://docs.python.org/3/library/struct.html
+https://docs.python.org/3/library/typing.html
+https://docs.python.org/3/tutorial/classes.html
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

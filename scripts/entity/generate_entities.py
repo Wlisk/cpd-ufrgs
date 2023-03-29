@@ -1,6 +1,7 @@
 import struct
 from scripts.entity.entity_info import ENTITY, EntityInfo
 from scripts.utils import NOT_FOUND
+from scripts.entity.io import write_to_end
 
 # realize a search in the entity file for the given item
 # returns the item id if found or NOT_FOUND otherwise

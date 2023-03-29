@@ -1,5 +1,9 @@
+# type imports
 from scripts.entity.entity_info import BaseTuple, EntityInfo, HeaderTuple
+from typing import Any
+
 import struct
+from ast import literal_eval    # parse/eval string into python object
 
 NOT_FOUND = -1
 
@@ -32,3 +36,30 @@ def convert_to_bin(entity: EntityInfo, data: BaseTuple|dict|HeaderTuple) -> byte
     # ATTENTION: notice that the order of the elements in list values follow the order of the elements in the BaseTuple/dict
     # *list is a python synthax to pass a list of arguments to a dynamic arguments function
     return struct.pack(entity.struct_format, *values)
+
+# 
+def safe_parse(v: str, cast_to: Any, default=None) -> Any:
+    try: return cast_to(v)
+    except: return default
+
+# 
+def parse_str_to_listdict(v:str) -> list[dict]: 
+    try: return literal_eval(v)
+    except: return [{}]
+
+# 
+def parse_get_year(v: str) -> int: 
+    year_str = v.split('-')[0]
+    try: return int(year_str)
+    except: return 0
+    
+# 
+def parse_get_name(v: str) -> list[str]:
+    l = parse_str_to_listdict(v)
+    return [item['name'] for item in l]
+
+def parse_int(v: str) -> int:
+    return safe_parse(v, int, 0)
+
+def parse_float(v: str) -> float:
+    return safe_parse(v, float, 0.0)
