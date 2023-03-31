@@ -1,15 +1,14 @@
 # type imports
-from scripts.entity.entity_info import BaseTuple, EntityInfo, HeaderTuple
-from typing import Any
+from scripts.types import CollectionType
+from typing import Any, Generator
 
-import struct
 from ast import literal_eval    # parse/eval string into python object
 
 NOT_FOUND = -1
 
 # COMPARE FUNCTIONS
-def search_by_id(e: BaseTuple, v: int): return e.id == v
-def search_by_name(e: BaseTuple, v: str): return e.name == v
+def search_by_id(e: CollectionType, v: int): return e.id == v
+def search_by_name(e: CollectionType, v: str): return e.name == v
 
 # converts a string of bytes into python string
 def bytes_to_str(data: bytes) -> str:
@@ -20,22 +19,6 @@ def bytes_to_str(data: bytes) -> str:
 # converts a string to a string of bytes
 def str_to_bytes(data: str) -> bytes:
     return bytes(data, 'utf-8')
-
-def convert_to_bin(entity: EntityInfo, data: BaseTuple|dict|HeaderTuple) -> bytes:
-    # convert the BaseTuple to dict so we can change its data (if needed)
-    if type(data) != dict: data = data._asdict()
-    
-    # if an element of an item is a string, them convert it to bytes
-    for key in data:
-        if type(data[key]) == str:
-            data[key] = str_to_bytes(data[key])
-
-    # get as a list only the values from the dictionary
-    values = list(data.values())
-    # convert those values into a binary pack based on the format of the entity
-    # ATTENTION: notice that the order of the elements in list values follow the order of the elements in the BaseTuple/dict
-    # *list is a python synthax to pass a list of arguments to a dynamic arguments function
-    return struct.pack(entity.struct_format, *values)
 
 # 
 def safe_parse(v: str, cast_to: Any, default=None) -> Any:
@@ -63,3 +46,18 @@ def parse_int(v: str) -> int:
 
 def parse_float(v: str) -> float:
     return safe_parse(v, float, 0.0)
+
+def bin_in_chuncks(bin: bytes, offset: int) -> Generator[bytes, None, None]:
+    pos = 0             
+    length = len(bin)  
+    # while end not reached 
+    while pos < length:
+        next_pos = pos + offset
+        # slice from the current pos plus offset
+        yield bin[pos : next_pos]
+        pos = next_pos
+
+
+
+
+

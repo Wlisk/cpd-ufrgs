@@ -3,10 +3,7 @@ from typing import Callable
 
 from scripts.utils \
     import parse_get_names, parse_get_year, parse_int, parse_float
-
-MIN_VOTES = 6.0
-MIN_VOTE_COUNT = 10
-MAX_TITLE_SIZE = 150 - 1
+from scripts.config import MIN_VOTES, MIN_VOTES_COUNT, MAX_TITLE_SIZE
 
 # ignore (not add) columns of the raw movie
 IGNORE_COLUMNS = [
@@ -32,7 +29,7 @@ IGNORE_COLUMNS = [
 FILTERS: dict[str, Callable[[str], bool]] =  {
     'adult':        lambda v: v and v == 'True',
     'vote_average': lambda v: v and parse_float(v) <= MIN_VOTES,
-    'vote_count':   lambda v: v and parse_int(v) <= MIN_VOTE_COUNT,
+    'vote_count':   lambda v: v and parse_int(v) <= MIN_VOTES_COUNT,
     'title':        lambda v: v and len(v) >= MAX_TITLE_SIZE
 }
 
