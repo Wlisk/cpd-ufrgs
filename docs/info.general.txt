@@ -8,13 +8,17 @@ how to read a csv file
 https://www.imdb.com/interfaces/
 https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset?resource=download&select=movies_metadata.csv
 
+# python module docs
 https://docs.python.org/3/library/struct.html
 https://docs.python.org/3/library/typing.html
 https://docs.python.org/3/tutorial/classes.html
+https://docs.python.org/3/library/bisect.html
 
+# usage examples of the struct module
+https://www.programcreek.com/python/example/86/struct.unpack
 
-
-
+# about dataclasses
+https://realpython.com/python-data-classes/
 
 
 

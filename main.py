@@ -2,7 +2,7 @@
 
 #from scripts import proccess_csv
 
-from scripts import generate_binaries
+from scripts.entity import generate_binaries
 
 csvfilename = "datasets/raw/movies_metadata.csv"
 

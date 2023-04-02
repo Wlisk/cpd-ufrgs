@@ -1,6 +1,8 @@
 # type imports
+from typing import Final
 from scripts.types \
-    import EntityInfo, HeaderType, CollectionType, MovieType, TitleType
+    import EntityInfo, CollectionType, MovieType, TitleType, \
+    HeaderType, BlockHeaderType, BlockType
 
 # string float char u16 u32 u64
 #   Ns     f    B    H   I   Q  -> unsigned, N is the length of the string
@@ -8,19 +10,20 @@ from scripts.types \
 # '<' is for little endian format
 
 
-# all entitie files have a header with the quantity of items in them, the size occupied in bytes for each item and a offset to the end of the items in the file
-# num_items:u32, item_size:u16, end_of_file:u64 -> 'IHQ'
-HEADER = EntityInfo( \
+# all entitie files have a header with the quantity of items in them 
+# and the size occupied in bytes for each item 
+# num_items:u32, item_size:u16 -> 'IH'
+HEADER: Final[EntityInfo] = EntityInfo( \
     name = 'header', \
-    struct_size_format = 'IHQ', \
+    struct_size_format = 'IH', \
     classtype = HeaderType \
 )
 
 # holds information about all entities
-ENTITY: dict[str, EntityInfo] = {
+ENTITY: Final[ dict[str, EntityInfo] ] = {
     'companies': EntityInfo( \
         name = 'companies', \
-        struct_size_format = 'H30s', \
+        struct_size_format = 'HI30s', \
         classtype = CollectionType
     ),
     'titles': EntityInfo( \
@@ -30,17 +33,33 @@ ENTITY: dict[str, EntityInfo] = {
     ),
     'genres': EntityInfo( \
         name = 'genres', \
-        struct_size_format = 'H20s', \
+        struct_size_format = 'HI20s', \
         classtype = CollectionType
     ),
     'countries': EntityInfo( \
         name = 'countries', \
-        struct_size_format = 'H30s', \
+        struct_size_format = 'HI30s', \
         classtype = CollectionType
     ),
     'movies': EntityInfo( \
         name = 'movies', \
-        struct_size_format = 'II', \
+        struct_size_format = 'IIHff', \
         classtype = MovieType \
     )
 }
+
+# all entities/relationships files based on blocks have a header with the quantity of blocks in them and the size occupied in bytes for each block
+# num_blocks:u16, block_size:u32 -> 'HI'
+HEADER_BLOCK: Final[EntityInfo] = EntityInfo( \
+    name = 'headerblock', \
+    struct_size_format = 'HI', \
+    classtype = BlockHeaderType \
+)
+
+# 
+BLOCK: Final[EntityInfo] = EntityInfo( \
+    name = 'block', \
+    struct_size_format = \
+        f'{BlockType.get_format()}{BlockType.get_data_size()}s', \
+    classtype = BlockType \
+)

@@ -1,14 +1,13 @@
 # type imports
-from scripts.types import CollectionType
+#from scripts.types import CollectionType
 from typing import Any, Generator
 
 from ast import literal_eval    # parse/eval string into python object
-
-NOT_FOUND = -1
+from scripts.config import DEV, DATA_DIR, MAX_YEAR, MIN_YEAR
 
 # COMPARE FUNCTIONS
-def search_by_id(e: CollectionType, v: int): return e.id == v
-def search_by_name(e: CollectionType, v: str): return e.name == v
+#def search_by_id(e: CollectionType, v: int): return e.id == v
+#def search_by_name(e: CollectionType, v: str): return e.name == v
 
 # converts a string of bytes into python string
 def bytes_to_str(data: bytes) -> str:
@@ -58,6 +57,16 @@ def bin_in_chuncks(bin: bytes, offset: int) -> Generator[bytes, None, None]:
         pos = next_pos
 
 
+if DEV:
+    def get_filename(name: str) -> str:
+        return f'{name}.test.bin'
+else:
+    def get_filename(name: str) -> str:
+        return f'{DATA_DIR}/{name}.bin'
 
 
-
+# verifies wich decade the year is to be put into
+# returns the year with the last digit turn into 0
+def wich_decade(year: int) -> int:
+    if not (MIN_YEAR <= year <= MAX_YEAR): return 0
+    return year - year % 10

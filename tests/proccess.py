@@ -2,11 +2,7 @@
 
 # configure module imports for user created modules outside the scope
 import sys, os  
-sys.path.append(\
-     os.path.abspath(\
-        os.path.join(os.path.dirname(__file__), '..')\
-    )\
-)
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from scripts.proccess.readmovies_csv import readmovies_csv
 

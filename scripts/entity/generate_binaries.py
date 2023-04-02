@@ -2,7 +2,7 @@
 
 import csv
 from scripts.entity.generate_entities import add_to_entity
-from scripts.entity.entity_info import ENTITY
+from scripts.binaries.controls import ENTITY
 
 movies_file = 'datasets/movies.csv'
 limiter = 0#64
