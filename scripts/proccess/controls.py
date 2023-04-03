@@ -30,7 +30,11 @@ FILTERS: Final[ dict[str, Callable[[str], bool]] ] =  {
     'adult':        lambda v: v and v == 'True',
     'vote_average': lambda v: v and parse_float(v) <= MIN_VOTES,
     'vote_count':   lambda v: v and parse_int(v) <= MIN_VOTES_COUNT,
-    'title':        lambda v: v and len(v) >= MAX_TITLE_SIZE
+    'title':        lambda v: v and len(v) >= MAX_TITLE_SIZE,
+    'release_date': lambda v: v and not ('-' in v),
+    'genres':       lambda v: v and (len(v) <= 1 or type(v) != str),
+    'production_countries': lambda v: v and (len(v) <= 1 or type(v) != str),
+    'production_companies': lambda v: v and (len(v) <= 1 or type(v) != str)
 }
 
 # used to rename a column from the movie dictionary

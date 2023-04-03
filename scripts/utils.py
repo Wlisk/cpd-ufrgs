@@ -3,7 +3,7 @@
 from typing import Any, Generator
 
 from ast import literal_eval    # parse/eval string into python object
-from scripts.config import DEV, DATA_DIR, MAX_YEAR, MIN_YEAR
+from scripts.config import DEV, DATA_DIR, MAX_YEAR, MIN_YEAR, TEST_DIR
 
 # COMPARE FUNCTIONS
 #def search_by_id(e: CollectionType, v: int): return e.id == v
@@ -17,6 +17,7 @@ def bytes_to_str(data: bytes) -> str:
 
 # converts a string to a string of bytes
 def str_to_bytes(data: str) -> bytes:
+    if type(data) != str: return data
     return bytes(data, 'utf-8')
 
 # 
@@ -38,7 +39,9 @@ def parse_get_year(v: str) -> int:
 # 
 def parse_get_names(v: str) -> list[str]:
     l = parse_str_to_listdict(v)
-    return [item['name'] for item in l]
+    if type(l) == dict and 'name' in l:
+        return [item['name'] for item in l]
+    return []
 
 def parse_int(v: str) -> int:
     return safe_parse(v, int, 0)
@@ -58,11 +61,15 @@ def bin_in_chuncks(bin: bytes, offset: int) -> Generator[bytes, None, None]:
 
 
 if DEV:
-    def get_filename(name: str) -> str:
-        return f'{name}.test.bin'
+    def get_filename(name: str, who: str) -> str:
+        if who == 'serial':
+            return f'{TEST_DIR}/{name}.test.dat'
+        return f'{TEST_DIR}/{name}.blocks.test.dat'
 else:
-    def get_filename(name: str) -> str:
-        return f'{DATA_DIR}/{name}.bin'
+    def get_filename(name: str, who: str) -> str:
+        if who == 'serial':
+            return f'{DATA_DIR}/{name}.dat'
+        return f'{DATA_DIR}/{name}.blocks.dat'
 
 
 # verifies wich decade the year is to be put into

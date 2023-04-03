@@ -19,9 +19,15 @@ class MovieBaseDict(TypedDict):
     rating: float
 
 #--------------------------------------------------------------------#
+# 
+class BaseType:
+    def normalize(self):
+        return self
+
+#--------------------------------------------------------------------#
 # base entity
 @dataclass
-class CollectionType:
+class CollectionType(BaseType):
     id: int             # id of the item
     block_pos: int      # position of the block in a block oriented file
     name: str|bytes     # the item data
@@ -45,7 +51,7 @@ class CollectionType:
 #--------------------------------------------------------------------#
 # title entity  
 @dataclass
-class TitleType:
+class TitleType(BaseType):
     id: int             # title id
     movie_id: int       # movie id, so we can get a movie info by title
     name: str|bytes     # the title
@@ -67,7 +73,7 @@ class TitleType:
 #--------------------------------------------------------------------#
 # header of all entities
 @dataclass
-class HeaderType:
+class HeaderType(BaseType):
     num_items: int      # u32, number of items in an entity file 
     item_size: int      # u16, size of the item structure in the entity file
 
@@ -82,7 +88,7 @@ class HeaderType:
 #--------------------------------------------------------------------#
 # movie entity
 @dataclass
-class MovieType:
+class MovieType(BaseType):
     id: int             # movie id
     title_pos: int      # poition of the title in the file (title "pointer")
     release_year: int   # year it was released
@@ -100,29 +106,36 @@ class MovieType:
 #--------------------------------------------------------------------#
 # block of a entity/relationship based on blocks
 @dataclass
-class BlockType:
+class BlockType(BaseType):
     block_signature: int
     block_id: int
+    num_items: int
     end_data: int
     data: bytes
 
-    def __init__(self, block_id: int, end_data: int, data: bytes):
-        self.block_id = block_id
-        self.end_data = end_data
-        self.data = data
-        self.block_signature = BLOCK_SIGNATURE
-
     @staticmethod
     def make(data: tuple):
-        if len(data) < 3: return None
+        if len(data) < 5: return None
         return BlockType(*data)
     
     @staticmethod
     def create(block_id: int):
         return BlockType(\
+            BLOCK_SIGNATURE, \
             block_id, \
+            0, \
             calcsize(BlockType.get_format()), \
             BlockType.get_data_size() * b'0' \
+        )
+
+    @staticmethod
+    def new(block_id: int):
+        return BlockType(\
+            BLOCK_SIGNATURE, \
+            block_id, \
+            0, \
+            calcsize(BlockType.get_format()), \
+            b'0' \
         )
     
     def to_bytestuple(self) -> tuple:
@@ -130,7 +143,7 @@ class BlockType:
     
     @staticmethod
     def get_format():
-        return 'IHI' #u32, u16, u32
+        return 'IHII' #u32, u16, u32, u32
     
     @staticmethod
     def get_data_size():
@@ -139,7 +152,7 @@ class BlockType:
 #--------------------------------------------------------------------#
 # header of all entities/relationships based on blocks
 @dataclass
-class BlockHeaderType:
+class BlockHeaderType(BaseType):
     num_blocks: int
     block_size: int = BLOCK_SIZE
 
@@ -156,9 +169,9 @@ class BlockHeaderType:
 
 #--------------------------------------------------------------------#
 # alias to incompass all created namedtuple types
-BaseType = CollectionType | TitleType | MovieType
-AllHeaderType = HeaderType | BlockHeaderType 
-AllType = BaseType | AllHeaderType
+AllEType = CollectionType | TitleType | MovieType
+AllHType = HeaderType | BlockHeaderType 
+AllType = AllEType | AllHType
 
 #--------------------------------------------------------------------#
 # object to hold information about an entity

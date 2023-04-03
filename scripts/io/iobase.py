@@ -1,11 +1,10 @@
 # importing types
 from io import BufferedReader
-from scripts.types import EntityInfo, AllHeaderType
+from scripts.types import EntityInfo, AllHType, AllEType
 
 from struct import pack, unpack
 from scripts.binaries.controls import ENTITY
 from scripts.config import DATA_DIR
-from scripts.utils import get_filename
 
 class IOBase:
     _file:          BufferedReader
@@ -13,15 +12,17 @@ class IOBase:
     _entity:        EntityInfo
     _file_exists:   bool
     _header:        EntityInfo
-    _headerdata:    AllHeaderType
+    _headerdata:    AllHType
+    _classtype:     AllEType
 
     def __init__(self, entity_name: str):
         self._entity = ENTITY[entity_name]
-        self._filename = get_filename(self._entity.name)
+        self._filename = ''
         self._file = None
         self._file_exists = False
         self._header = None
         self._headerdata = None
+        self._classtype = None
 
     # open the stream to read/write an entity file
     def open(self):
@@ -52,7 +53,7 @@ class IOBase:
         return self._file.read(size)
 
     # read a header of an entity file
-    def read_header(self) -> AllHeaderType:
+    def read_header(self) -> AllHType:
         self._file.seek(0)
         header_data = self._file.read(self._header.struct_size)
         # generate and return an object with the data read within

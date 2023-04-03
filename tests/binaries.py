@@ -33,4 +33,9 @@ def t1():
 
 t1()
 
+def t2():
+    pass
+
+t2()
+
 # block_size % item_size = items_per_block

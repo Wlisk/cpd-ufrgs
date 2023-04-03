@@ -17,10 +17,12 @@ BLOCK_SIZE: Final = 4*MB
 BLOCK_SIGNATURE: Final = -1
 
 # curr folder is script, so using '..' let us outside of script folder
-BASE_DIR: Final = path.abspath('..')
+BASE_DIR: Final = path.abspath('.')
 DATA_DIR: Final = f'{BASE_DIR}/data'
+TEST_DIR: Final = f'{BASE_DIR}/tests/data'
+CSVFILE: Final = f'{BASE_DIR}/datasets/movies.csv'
 
 NOT_FOUND: Final = -1
 
-MAX_YEAR: Final[int] = 2060
-MIN_YEAR: Final[int] = 1960
+MAX_YEAR: Final = 2060
+MIN_YEAR: Final = 1960

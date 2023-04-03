@@ -24,27 +24,32 @@ ENTITY: Final[ dict[str, EntityInfo] ] = {
     'companies': EntityInfo( \
         name = 'companies', \
         struct_size_format = 'HI30s', \
-        classtype = CollectionType
+        classtype = CollectionType \
     ),
     'titles': EntityInfo( \
         name = 'titles', \
         struct_size_format = 'II80s', \
-        classtype = TitleType
+        classtype = TitleType \
     ),
     'genres': EntityInfo( \
         name = 'genres', \
         struct_size_format = 'HI20s', \
-        classtype = CollectionType
+        classtype = CollectionType \
     ),
     'countries': EntityInfo( \
         name = 'countries', \
         struct_size_format = 'HI30s', \
-        classtype = CollectionType
+        classtype = CollectionType \
     ),
     'movies': EntityInfo( \
         name = 'movies', \
         struct_size_format = 'IIHff', \
         classtype = MovieType \
+    ),
+    'decades': EntityInfo( \
+        name = 'decades', \
+        struct_size_format = 'HIH', \
+        classtype = CollectionType \
     )
 }
 

@@ -1,13 +1,8 @@
 #!/usr/bin/python
-
-#from scripts import proccess_csv
-
-from scripts.entity import generate_binaries
-
-csvfilename = "datasets/raw/movies_metadata.csv"
+from scripts.binaries.binaries import generate_binaries
 
 def main():
-    pass
+    generate_binaries()
 
 if __name__ == "__main__":
     main()

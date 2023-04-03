@@ -22,7 +22,8 @@ def readmovies_csv(csvfilename: str) -> Generator[MovieBaseDict, None, None]:
                 # test if a column is in the filters, 
                 # and tries to execute the correspondent function, 
                 # otherwise execute the default false-return-function
-                if FILTERS.get(colname, lambda v: False)(value):
+                filters_check = FILTERS.get(colname, lambda v: False)(value)
+                if filters_check or filters_check == None:
                     skip = True
                     break
 
@@ -32,6 +33,9 @@ def readmovies_csv(csvfilename: str) -> Generator[MovieBaseDict, None, None]:
                 # change the name of the column if there is a new one
                 # or keep the same column name
                 newcolname = RENAME_COL.get(colname, colname)
+
+                if colname == 'release_date':
+                    print(csvrow[colname])
 
                 # proccess the data of the column if exists a funtion for this
                 # otherwise execute a return-same-value function

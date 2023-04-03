@@ -16,7 +16,7 @@ vote_average: float
 # Table Titles
 id: int_32
 movie_id: int_32
-name: char[150]
+name: char[80]
 
 # Table Genres
 id: int_16
@@ -24,7 +24,7 @@ name: char[20]
 
 # Table Countries
 id: int_16
-name: char[20]
+name: char[30]
 
 # Table Companies
 id: int_16

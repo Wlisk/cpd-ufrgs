@@ -7,14 +7,14 @@ from io import SEEK_END
 from scripts.config import BLOCK_SIZE, BLOCK_SIGNATURE
 from struct import pack, unpack, iter_unpack
 from scripts.binaries.controls import HEADER_BLOCK, BLOCK
-
-
-
+from scripts.utils import get_filename
+# 
 class Blocks(IOBase):
     def __init__(self, entity_name: str):
         super().__init__(entity_name)
         self._header = HEADER_BLOCK
         self._headerdata = BlockHeaderType(0)
+        self._filename = get_filename(self._entity.name, 'blocks')
 
     def open(self):
         super().open()
