@@ -143,7 +143,7 @@ class BlockType(BaseType):
     
     @staticmethod
     def get_format():
-        return 'IHII' #u32, u16, u32, u32
+        return '<iHII' #i32, u16, u32, u32
     
     @staticmethod
     def get_data_size():
@@ -155,9 +155,6 @@ class BlockType(BaseType):
 class BlockHeaderType(BaseType):
     num_blocks: int
     block_size: int = BLOCK_SIZE
-
-    def __init__(self, num_blocks: int):
-        self.num_blocks = num_blocks
 
     @staticmethod
     def make(data: tuple):

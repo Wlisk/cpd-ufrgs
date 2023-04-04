@@ -69,3 +69,6 @@ class IOBase:
         # converts to a binary packed structure
         bin = pack(self._header.struct_format, *bt_data)
         self.write_at(0, bin)
+
+    def read_all(self) -> list[AllEType]:
+        return []

@@ -20,8 +20,10 @@ https://www.programcreek.com/python/example/86/struct.unpack
 # about dataclasses
 https://realpython.com/python-data-classes/
 
-
-
+# sorting and search
+https://realpython.com/binary-search-python/
+https://www.w3schools.com/python/ref_list_sort.asp
+https://www.mybluelinux.com/python-sorting-libraries-and-algorithms-benchmark/comparison/
 
 
 

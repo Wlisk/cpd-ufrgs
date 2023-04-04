@@ -1,4 +1,4 @@
-add ast lib and removes json lib because json.dumps() couldn't parse single quote strings and ast.literal_eval() could.
+add ast lib and removes json lib because json.dumps() couldn't parse single quote strings and ast.literal_eval() could. It's used to parse strings in the columns of genres, companies and countries while proccessing the csv file. These columns save a string wich should contain a list of dictionaries, and use single quotes to dictionaries key and value. So the ast module is used to 'safely' parse the string.
 
 using typing lib, because it provides us complex types to use for type checks. Type check is useful as it provides helpful hints while coding as well as let us known wich types and methods we are dealing at coding time. An IDE like VSCode is needed for type hints.
 
@@ -8,4 +8,6 @@ separate the code in the folders (proccess, binaries and search) to help organiz
     binaries - holds the code to generate entities and relationships based on the movie data
 
     search - holds the code to search information in the binaries created
+
+using pickle lib, it provide us a simple method to serialize objects and save it into disk. And we are using it to load and save a Trie like structure from disk.
 

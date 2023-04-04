@@ -65,6 +65,6 @@ HEADER_BLOCK: Final[EntityInfo] = EntityInfo( \
 BLOCK: Final[EntityInfo] = EntityInfo( \
     name = 'block', \
     struct_size_format = \
-        f'{BlockType.get_format()}{BlockType.get_data_size()}s', \
+        f'{BlockType.get_format()[1:]}{BlockType.get_data_size()}s', \
     classtype = BlockType \
 )

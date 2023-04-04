@@ -5,7 +5,7 @@ from scripts.types import BlockHeaderType, BlockType
 
 from io import SEEK_END
 from scripts.config import BLOCK_SIZE, BLOCK_SIGNATURE
-from struct import pack, unpack, iter_unpack
+from struct import calcsize, pack, unpack, pack_into
 from scripts.binaries.controls import HEADER_BLOCK, BLOCK
 from scripts.utils import get_filename
 # 
@@ -15,6 +15,7 @@ class Blocks(IOBase):
         self._header = HEADER_BLOCK
         self._headerdata = BlockHeaderType(0)
         self._filename = get_filename(self._entity.name, 'blocks')
+        self._classtype = BlockType
 
     def open(self):
         super().open()
@@ -34,7 +35,19 @@ class Blocks(IOBase):
         pos = self._file.seek(0, SEEK_END)
         block = BlockType.create(self._headerdata.num_blocks + 1)
         bt_block = block.to_bytestuple()
-        super().write_at(pos, pack(BLOCK.struct_format, *bt_block))
+        #print(BLOCK.struct_format, len(bt_block), len(bt_block[-1]))
+        # create an empty byte string with the correct length
+        bin = bytearray(BLOCK.struct_size) # + len(block.data)
+        # pack the BlockType data into the byte string
+        #print(*bt_block[:-1])
+        pack_into(BlockType.get_format(), bin, 0, *bt_block[:-1])
+        # pack the data into the remaining bytes in the byte string
+        pack_into(\
+            f'{BlockType.get_data_size()}s', bin, \
+            calcsize(BlockType.get_format()), bt_block[-1] \
+        )
+        #bin = pack(BLOCK.struct_format, *bt_block)
+        super().write_at(pos, bin)
         self._headerdata.num_blocks += 1
         return pos
 
@@ -50,8 +63,19 @@ class Blocks(IOBase):
     
     # write a block into a given position in the file
     def write(self, block_pos: int, block: BlockType):
+        print(self._header.struct_format, block.to_bytestuple())
+        bt_block = block.to_bytestuple()
+        # bin = bytearray(BLOCK.struct_size)
+        # pack_into(BlockType.get_format(), bin, 0, *bt_block[:-1])
+        # pack_into(\
+        #     f'{BlockType.get_data_size()}s', bin, \
+        #     calcsize(BlockType.get_format()), block.data \
+        # )
         super().write_at(\
             block_pos, \
-            pack(self._header.struct_format, block.to_bytestuple()) \
+            pack(\
+                f'{BlockType.get_format()}{len(bt_block[-1])}s', \
+                *bt_block \
+            ) \
         )
 

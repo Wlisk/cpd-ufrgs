@@ -5,3 +5,4 @@ datasets/movies.csv
 __pycache__/
 data/
 tests/movies_metadata.csv
+test/data

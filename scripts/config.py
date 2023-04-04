@@ -12,7 +12,7 @@ MAX_TITLE_SIZE: Final = 80 - 1
 KB: Final = 1024       # 1KB
 MB: Final = 1024 * KB  # 1MB
 
-BLOCK_SIZE: Final = 4*MB
+BLOCK_SIZE: Final = 1*MB
 
 BLOCK_SIGNATURE: Final = -1
 
@@ -20,7 +20,9 @@ BLOCK_SIGNATURE: Final = -1
 BASE_DIR: Final = path.abspath('.')
 DATA_DIR: Final = f'{BASE_DIR}/data'
 TEST_DIR: Final = f'{BASE_DIR}/tests/data'
+
 CSVFILE: Final = f'{BASE_DIR}/datasets/movies.csv'
+MOVIESTRIE: Final = f'{DATA_DIR}/movies.trie.pickle'
 
 NOT_FOUND: Final = -1
 

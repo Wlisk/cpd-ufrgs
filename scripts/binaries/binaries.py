@@ -3,17 +3,23 @@ from scripts.types import MovieType, TitleType, CollectionType, BlockType
 from scripts.io.iobase import IOBase
 
 from scripts.proccess.readmovies_csv import readmovies_csv
-from scripts.config import CSVFILE
+from scripts.config import CSVFILE, MOVIESTRIE
 from scripts.io.serial import Serial
 from scripts.io.blocks import Blocks
 from scripts.utils import wich_decade
 from struct import pack
+from scripts.search.moviestrie import MoviesTrie
 
-
+# 
 def generate_binaries():
     # initialize the streams to open and read entity files
     movies_stream       = Serial('movies', MovieType)
     titles_stream       = Serial('titles', TitleType)
+    # initialize the collection streams to open and read entity files
+    genres_stream       = Serial('genres', CollectionType)
+    countries_stream    = Serial('countries', CollectionType)
+    companies_stream    = Serial('companies', CollectionType)
+    decades_stream      = Serial('decades', CollectionType)
 
     # create a dict for each collection type entity
     # dicts don't allow repetitive keys
@@ -24,22 +30,45 @@ def generate_binaries():
     decades:    dict[int, list[int]] = dict()
 
     # create a stream "manager" to "automatically" open/close the streams
-    stream_manager: list[IOBase] = [ movies_stream, titles_stream ]
+    stream_manager: list[IOBase] = [ \
+        movies_stream, titles_stream, \
+    ]
+    stream_c_manager: list[tuple[IOBase, dict[str, list[int]]]] = [ \
+        (genres_stream,       genres), \
+        (countries_stream, countries), \
+        (companies_stream, companies), \
+        (decades_stream,     decades) \
+    ]
     # open all streams 
     for stream in stream_manager: stream.open()
 
-    # TODO: open entity files and load their content, into the entities
-    # it'll be used to verifie and check if an item is already in the file
+    # TODO: open entity files and load their content, it'll be used to
+    # verify and check if an item is already in the entity file
+    for stream, _dict in stream_c_manager: 
+        stream.open()
+        items = stream.read_all()
+        for item in items:
+            _dict[item.name] = []
+        stream.close()
 
-    # TODO: get id from the last movie in the titles or movie entity
+    # get id from the last movie in the titles or movie entity
     # so we load it and start the id from that position plus 1
     idx = 1
+    last_added = titles_stream.read_last()
+    if last_added != None: 
+        idx = last_added.id + 1
+
+    max_idx = idx + 10
+    
+    movies = MoviesTrie.load(MOVIESTRIE)
 
     # iterate through all movies and add their info into entity files
     # notice that only title and movie entity files are write 
     for movie in readmovies_csv(CSVFILE):
-        # TODO: check if a movie is not already added
+        # check if a movie is not already added
         # based on its movie id, or title
+        result = movies.search(movie['id'])
+        if result is not None: continue
 
         # write the title into its respective entity file
         _title = TitleType(idx, movie['id'], movie['title'])
@@ -47,15 +76,17 @@ def generate_binaries():
 
         # write the movie into its respective entity file
         _movie = MovieType(\
-            idx, title_pos, movie['release_year'], \
+            movie['id'], title_pos, movie['release_year'], \
             movie['duration'], movie['rating'] \
         )
-        movies_stream.write(_movie)
+        movie_pos: int = movies_stream.write(_movie)
+        movies.add(movie['id'], movie_pos)
 
         # iterate through each item in the collection
         # if the item is not already in the dict
         # then create a new one with default value as a list
         # and add to it the id of the movie
+        print(movie['genres'])
         for genre in movie['genres']:
             genres.setdefault(genre, []).append(movie['id'])
         for country in movie['countries']:
@@ -68,14 +99,12 @@ def generate_binaries():
 
         idx += 1
 
+        if idx == max_idx: break
+
     # close all streams opened
     for stream in stream_manager: stream.close()
+    movies.save()
 
-    # initialize the collection streams to open and read entity files
-    genres_stream       = Serial('genres', CollectionType)
-    countries_stream    = Serial('countries', CollectionType)
-    companies_stream    = Serial('companies', CollectionType)
-    decades_stream      = Serial('decades', CollectionType)
     # initialize the streams for blocks management
     genres_block        = Blocks('genres')
     countries_block     = Blocks('countries')
@@ -98,6 +127,11 @@ def generate_binaries():
         (companies, companies_block, companies_stream), \
         (decades,   decades_block,     decades_stream)
     ]
+
+    print(genres)
+    print(countries)
+    print(companies)
+    print(decades)
 
     # loop through the collections
     for collection in collections:

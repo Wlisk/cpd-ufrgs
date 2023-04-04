@@ -39,7 +39,7 @@ def parse_get_year(v: str) -> int:
 # 
 def parse_get_names(v: str) -> list[str]:
     l = parse_str_to_listdict(v)
-    if type(l) == dict and 'name' in l:
+    if len(l) > 0 and type(l[0]) == dict:
         return [item['name'] for item in l]
     return []
 
