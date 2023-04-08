@@ -6,9 +6,10 @@ from scripts.proccess.readmovies_csv import readmovies_csv
 from scripts.config import CSVFILE, MOVIESTRIE
 from scripts.io.serial import Serial
 from scripts.io.blocks import Blocks
-from scripts.utils import wich_decade
+from scripts.utils import wich_decade, u32list_to_bytes
 from struct import pack
 from scripts.search.moviestrie import MoviesTrie
+from scripts.search.controls import found_in_entity, by_name
 
 # 
 def generate_binaries():
@@ -30,9 +31,7 @@ def generate_binaries():
     decades:    dict[int, list[int]] = dict()
 
     # create a stream "manager" to "automatically" open/close the streams
-    stream_manager: list[IOBase] = [ \
-        movies_stream, titles_stream, \
-    ]
+    stream_manager: list[IOBase] = [ movies_stream, titles_stream ]
     stream_c_manager: list[tuple[IOBase, dict[str, list[int]]]] = [ \
         (genres_stream,       genres), \
         (countries_stream, countries), \
@@ -42,7 +41,7 @@ def generate_binaries():
     # open all streams 
     for stream in stream_manager: stream.open()
 
-    # TODO: open entity files and load their content, it'll be used to
+    # open entity files and load their content, it'll be used to
     # verify and check if an item is already in the entity file
     for stream, _dict in stream_c_manager: 
         stream.open()
@@ -51,16 +50,11 @@ def generate_binaries():
             _dict[item.name] = []
         stream.close()
 
-    # get id from the last movie in the titles or movie entity
-    # so we load it and start the id from that position plus 1
-    idx = 1
-    last_added = titles_stream.read_last()
-    if last_added != None: 
-        idx = last_added.id + 1
-
+    # get id from the num of items in the movies/titles entity file
+    idx: int = titles_stream._headerdata.num_items + 1
     max_idx = idx + 10
     
-    movies = MoviesTrie.load(MOVIESTRIE)
+    movies: MoviesTrie = MoviesTrie.load(MOVIESTRIE)
 
     # iterate through all movies and add their info into entity files
     # notice that only title and movie entity files are write 
@@ -86,11 +80,12 @@ def generate_binaries():
         # if the item is not already in the dict
         # then create a new one with default value as a list
         # and add to it the id of the movie
-        print(movie['genres'])
         for genre in movie['genres']:
             genres.setdefault(genre, []).append(movie['id'])
+
         for country in movie['countries']:
             countries.setdefault(country, []).append(movie['id'])
+
         for company in movie['companies']:
             companies.setdefault(company, []).append(movie['id'])
         
@@ -111,14 +106,6 @@ def generate_binaries():
     companies_block     = Blocks('companies')
     decades_block       = Blocks('decades')
 
-    # create a stream "manager" to "automatically" open/close the streams
-    stream_manager: list[IOBase] = [\
-        genres_stream, countries_stream, companies_stream, decades_stream, \
-        genres_block, countries_block, companies_block, decades_block \
-    ]
-    # open all collection streams 
-    for stream in stream_manager: stream.open()
-
     # create a list to enable us to iterate through a generic loop 
     # for all collections, so it does not need code repetition
     collections: list[tuple[dict[str|int, list[int]], Blocks, Serial]] = [\
@@ -135,26 +122,34 @@ def generate_binaries():
 
     # loop through the collections
     for collection in collections:
-        # TODO: idx should be based on the last item in the entity file
-        # so we must load it from the file first
-        idx = 1
         _dict, _block, _stream = collection
+
+        _stream.open()
+        _block.open()
+
+        # id's are based on the num of elements in the entities file
+        idx: int = _stream._headerdata.num_items + 1
+
+        # read all items from the entity file
+        entity_data: list[CollectionType] = _stream.read_all()
+
+        # loop through each collection item found in readmovies_csv
         for item in _dict.keys():
-            # TODO: check if a block for this item already exists
-            # before creating a new block
-            # TODO: check if the item is already in the entitity file
-            # if it is, continue to the next item
-            print(item, _block._filename)
-            block_pos: int = _block.create()
-            block_id: int = 1
+            # check if the item is already in the entitity file
+            # if it is not, create a new block for the item
+            if not found_in_entity(entity_data, item, by_name): 
+                # create a new block in the blocks file for this new item
+                block_pos: int = _block.create()
+                # write the new item into the entity file
+                c = CollectionType(idx, block_pos, item)
+                _stream.write(c)
+                # update the id for the new items to come
+                idx += 1
 
-            c = CollectionType(idx, block_pos, item)
-            _stream.write(c)
-            block = BlockType.new(block_id)
-            data = _dict[item]
-            block.data = pack(f'<{len(data)}I', *data)
-            _block.write(block_pos, block)
-            block_id += 1
+            # add a list of integers into the block
+            # if there is new elements (ids)
+            if len(_dict[item]): _block.write_end(_dict[item])
+                
 
-    # close all collection streams opened
-    for stream in stream_manager: stream.close()
+        _stream.close()
+        _block.close()

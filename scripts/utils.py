@@ -1,13 +1,10 @@
 # type imports
-#from scripts.types import CollectionType
 from typing import Any, Generator
 
 from ast import literal_eval    # parse/eval string into python object
-from scripts.config import DEV, DATA_DIR, MAX_YEAR, MIN_YEAR, TEST_DIR
-
-# COMPARE FUNCTIONS
-#def search_by_id(e: CollectionType, v: int): return e.id == v
-#def search_by_name(e: CollectionType, v: str): return e.name == v
+from scripts.config \
+    import DEV, DATA_DIR, MAX_YEAR, MIN_YEAR, TEST_DIR, INT_SIZE
+from struct import pack
 
 # converts a string of bytes into python string
 def bytes_to_str(data: bytes) -> str:
@@ -77,3 +74,21 @@ else:
 def wich_decade(year: int) -> int:
     if not (MIN_YEAR <= year <= MAX_YEAR): return 0
     return year - year % 10
+
+# 1
+def u32list_to_bytes(u32_list: list[int]) -> bytearray:
+    #create a buffer to save the list of numbers
+    buffer = bytearray(len(u32_list) * INT_SIZE)
+    # allow direct memory access to the buffer
+    # notice that python without this direct access
+    # would cause extra allocations of memory when using slice
+    mem_buffer = memoryview(buffer)
+    buffer = bytearray()
+    # loop through each number and put then into the buffer
+    # with the number correctly converted to be save
+    offset = 0
+    for u32 in u32_list:
+        mem_buffer[offset:offset+4] = pack("<i", u32)
+        offset += 4
+
+    return buffer

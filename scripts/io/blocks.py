@@ -1,15 +1,19 @@
 # type imports
 from dataclasses import dataclass, astuple
 from scripts.io.iobase import IOBase
-from scripts.types import BlockHeaderType, BlockType
+from scripts.types import BlockHeaderType, BlockType, EntityInfo
 
 from io import SEEK_END
 from scripts.config import BLOCK_SIZE, BLOCK_SIGNATURE
 from struct import calcsize, pack, unpack, pack_into
 from scripts.binaries.controls import HEADER_BLOCK, BLOCK
-from scripts.utils import get_filename
+from scripts.utils import get_filename, u32list_to_bytes
 # 
 class Blocks(IOBase):
+    _header: EntityInfo
+    _headerdata: BlockHeaderType
+    _classtype: BlockType
+
     def __init__(self, entity_name: str):
         super().__init__(entity_name)
         self._header = HEADER_BLOCK
@@ -78,4 +82,10 @@ class Blocks(IOBase):
                 *bt_block \
             ) \
         )
+
+    # 
+    def write_end(self, block: BlockType, _list: list[int]):
+        end = block.end_data
+        bin_u32list = u32list_to_bytes(_list)
+        super().write_at(end, bin_u32list)
 

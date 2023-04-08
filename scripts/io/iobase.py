@@ -42,7 +42,7 @@ class IOBase:
             self._file = None
 
     # write data at some position in the file
-    def write_at(self, pos: int, data: bytes):
+    def write_at(self, pos: int, data: bytes|bytearray):
         self._file.seek(pos)
         self._file.write(data)
 

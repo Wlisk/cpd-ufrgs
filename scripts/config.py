@@ -13,6 +13,7 @@ KB: Final = 1024       # 1KB
 MB: Final = 1024 * KB  # 1MB
 
 BLOCK_SIZE: Final = 1*MB
+BUFFER: Final = BLOCK_SIZE*b'0'
 
 BLOCK_SIGNATURE: Final = -1
 
@@ -28,3 +29,6 @@ NOT_FOUND: Final = -1
 
 MAX_YEAR: Final = 2060
 MIN_YEAR: Final = 1960
+
+# the size of an integer in bytes
+INT_SIZE: Final = 4
