@@ -1,11 +1,11 @@
 # type imports 
 from typing import Callable, Final
-
+# module imports
+from scripts.config import MIN_VOTES, MIN_VOTES_COUNT, MAX_TITLE_SIZE
 from scripts.utils \
     import parse_get_names, parse_get_year, parse_int, parse_float
-from scripts.config import MIN_VOTES, MIN_VOTES_COUNT, MAX_TITLE_SIZE
 
-# ignore (not add) columns of the raw movie
+# ignore (not add) columns of the raw movie (movie read from csv)
 IGNORE_COLUMNS: Final[ list[str] ] = [
     'adult',
     'belongs_to_collection',
@@ -32,9 +32,9 @@ FILTERS: Final[ dict[str, Callable[[str], bool]] ] =  {
     'vote_count':   lambda v: v and parse_int(v) <= MIN_VOTES_COUNT,
     'title':        lambda v: v and len(v) >= MAX_TITLE_SIZE,
     'release_date': lambda v: v and not ('-' in v),
-    'genres':       lambda v: v and (len(v) <= 1 or type(v) != str),
-    'production_countries': lambda v: v and (len(v) <= 1 or type(v) != str),
-    'production_companies': lambda v: v and (len(v) <= 1 or type(v) != str)
+    'genres':       lambda v: v and (len(v) == 0 or type(v) != str),
+    'production_countries': lambda v: v and (len(v) == 0 or type(v) != str),
+    'production_companies': lambda v: v and (len(v) == 0 or type(v) != str)
 }
 
 # used to rename a column from the movie dictionary

@@ -10,7 +10,15 @@ from scripts.utils import NOT_FOUND, convert_to_bin
 
 #list.reduce
 
-
+def bin_in_chuncks(bin: bytes, offset: int) -> Generator[bytes, None, None]:
+    pos = 0             
+    length = len(bin)  
+    # while end not reached 
+    while pos < length:
+        next_pos = pos + offset
+        # slice from the current pos plus offset
+        yield bin[pos : next_pos]
+        pos = next_pos
 
 
 

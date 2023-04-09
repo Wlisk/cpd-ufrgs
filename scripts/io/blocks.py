@@ -83,9 +83,25 @@ class Blocks(IOBase):
             ) \
         )
 
-    # 
-    def write_end(self, block: BlockType, _list: list[int]):
-        end = block.end_data
+    # write a list of integers into a block and then 
+    # write the block into its blocks file
+    def write_into(self, block_pos: int, block: BlockType, _list: list[int]):
+        # convert the list into its binary representation
         bin_u32list = u32list_to_bytes(_list)
-        super().write_at(end, bin_u32list)
+
+        # get the start and end position of the block data 
+        # (relative to the block data)
+        end = block.end_data + len(bin_u32list)
+        start = block.end_data
+
+        # update the data in the block
+        block.num_items += len(_list)
+        block.end_data = end #+1?
+
+        # allow direct access to the memory in the block data 
+        # and write to the specified location in memory
+        mem_datablock = memoryview(block.data)
+        mem_datablock[start:end] = bin_u32list
+        
+        self.write(block_pos, block)
 

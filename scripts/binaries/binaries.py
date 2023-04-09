@@ -137,7 +137,10 @@ def generate_binaries():
         for item in _dict.keys():
             # check if the item is already in the entitity file
             # if it is not, create a new block for the item
-            if not found_in_entity(entity_data, item, by_name): 
+            block_pos = _block._header.struct_size
+            found:CollectionType = found_in_entity(entity_data, item, by_name)
+
+            if found is None: 
                 # create a new block in the blocks file for this new item
                 block_pos: int = _block.create()
                 # write the new item into the entity file
@@ -145,10 +148,14 @@ def generate_binaries():
                 _stream.write(c)
                 # update the id for the new items to come
                 idx += 1
+            else: block_pos = found.block_pos
+
+            item_block: BlockType = _block.read(block_pos)
 
             # add a list of integers into the block
             # if there is new elements (ids)
-            if len(_dict[item]): _block.write_end(_dict[item])
+            if len(_dict[item]): 
+                _block.write_into(block_pos, item_block, _dict[item])
                 
 
         _stream.close()
