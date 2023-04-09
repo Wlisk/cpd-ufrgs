@@ -1,7 +1,8 @@
 # type imports 
 from typing import Callable, Final
-# module imports
+# const imports
 from scripts.config import MIN_VOTES, MIN_VOTES_COUNT, MAX_TITLE_SIZE
+# module imports
 from scripts.utils \
     import parse_get_names, parse_get_year, parse_int, parse_float
 

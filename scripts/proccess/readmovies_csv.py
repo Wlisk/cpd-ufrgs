@@ -1,8 +1,9 @@
 # type imports
 from typing import Generator 
 from scripts.types import MovieBaseDict
-
-from csv import DictReader      
+# module imports
+from csv import DictReader
+# const imports   
 from scripts.proccess.controls \
     import FILTERS, IGNORE_COLUMNS, RENAME_COL, PROCCESS
 
@@ -11,19 +12,20 @@ def readmovies_csv(csvfilename: str) -> Generator[MovieBaseDict, None, None]:
     with open(csvfilename, 'r') as csvrfile:
         # read csv as a list of dictionaries
         csvreader = DictReader(csvrfile)
-
+        
         # iterate through every row on the csv to get the movies data
         for csvrow in csvreader:
             movie: MovieBaseDict = {}
             skip: bool = False
 
             # iterate through all the columns of the row
+            # dic.items() return a list of tuples with key and value
             for colname, value in csvrow.items():
                 # test if a column is in the filters, 
                 # and tries to execute the correspondent function, 
                 # otherwise execute the default false-return-function
                 filters_check = FILTERS.get(colname, lambda v: False)(value)
-                if filters_check or filters_check == None:
+                if filters_check or filters_check is None:
                     skip = True
                     break
 
@@ -33,9 +35,6 @@ def readmovies_csv(csvfilename: str) -> Generator[MovieBaseDict, None, None]:
                 # change the name of the column if there is a new one
                 # or keep the same column name
                 newcolname = RENAME_COL.get(colname, colname)
-
-                if colname == 'release_date':
-                    print(csvrow[colname])
 
                 # proccess the data of the column if exists a funtion for this
                 # otherwise execute a return-same-value function

@@ -4,6 +4,7 @@ from typing         import TypedDict
 from dataclasses    import dataclass, astuple
 from struct         import calcsize
 from scripts.utils  import str_to_bytes, bytes_to_str
+# const imports
 from scripts.config import BLOCK_SIGNATURE, BLOCK_SIZE
 
 #--------------------------------------------------------------------#
@@ -108,7 +109,7 @@ class BlockType(BaseType):
     block_id: int
     num_items: int
     end_data: int
-    data: bytes|bytearray
+    data: bytes|bytearray = b''
 
     # create a new instance of this type with the tuple passed (5 args)
     @staticmethod

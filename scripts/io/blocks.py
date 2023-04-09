@@ -1,87 +1,88 @@
 # type imports
-from dataclasses import dataclass, astuple
-from scripts.io.iobase import IOBase
-from scripts.types import BlockHeaderType, BlockType, EntityInfo
-
-from io import SEEK_END
-from scripts.config import BLOCK_SIZE, BLOCK_SIGNATURE
-from struct import calcsize, pack, unpack, pack_into
+from scripts.io.iobase  import IOBase
+from scripts.types      import BlockHeaderType, BlockType
+# module imports 
+from struct             import calcsize, pack, unpack, pack_into
+from scripts.utils      import get_filename, u32list_to_bytes
+# const imports
+from io                 import SEEK_END
+from scripts.config     import BLOCK_SIGNATURE, INT_SIZE, BLOCK_BUFFER
 from scripts.binaries.controls import HEADER_BLOCK, BLOCK
-from scripts.utils import get_filename, u32list_to_bytes
-# 
-class Blocks(IOBase):
-    _header: EntityInfo
-    _headerdata: BlockHeaderType
-    _classtype: BlockType
 
+# tools for read/write entity/blocks files based on blocks
+class Blocks(IOBase):
+    _headerdata: BlockHeaderType    # the data of the header
+    _classtype: BlockType           # utility to create class instances
+
+    # receives only the name of the entity/blocks file
     def __init__(self, entity_name: str):
         super().__init__(entity_name)
-        self._header = HEADER_BLOCK
-        self._headerdata = BlockHeaderType(0)
-        self._filename = get_filename(self._entity.name, 'blocks')
-        self._classtype = BlockType
-
-    def open(self):
-        super().open()
-        if not self._file_exists:
-            self._file_exists = True
-            super().write_header()
-        else:
-            self._headerdata = super().read_header()
+        self._header        = HEADER_BLOCK
+        self._headerdata    = BlockHeaderType(0)
+        self._filename      = get_filename(entity_name, 'blocks')
+        self._classtype     = BlockType
 
     # verifies if the block signature is a valid block signature
-    def is_valid_block(self, signature: int) -> bool:
-        return signature == BLOCK_SIGNATURE
+    def is_valid_block(self, block: BlockType) -> bool:
+        return block.block_signature == BLOCK_SIGNATURE
+    
+    # read a block at a given position in the file and load it to memory
+    def read(self, block_pos: int) -> BlockType:
+        # get the block from disk (size of block_size)
+        buffer = super().read_at(block_pos, self._headerdata.block_size)
+        # get the format for the block, except the data section
+        _format = BlockType.get_format()
+        # convert the binary into (BlockType), except data section
+        block = BlockType.make( unpack(_format, buffer) )
+        # get the size in bytes occupied by the block, except data section
+        offset = calcsize(_format)
+        # get the size in bytes occupied by the data section items
+        size = block.num_items * INT_SIZE
+        # get the data section items (kept in binary)
+        block.data = buffer[offset:offset+size]
+
+        # if there is no error with the pos or the data
+        # then maybe we have read a valid block
+        return block if self.is_valid_block(block) else None
+    
+    # write a block into a given position in the file
+    def write(self, block_pos: int, block: BlockType):
+        # convert the block into a tuple so we can pack it
+        bt_block = block.to_bytestuple()
+        # get the block format, except for the data section
+        _format = BlockType.get_format()
+        # write at the given pos the block (binary converted)
+        super().write_at(\
+            block_pos, \
+            pack(f'{_format}{len(block.data)}s', *bt_block) \
+        )
 
     # create a new block at the end of the file 
     # and return the new block position
     def create(self) -> int:
-        pos = self._file.seek(0, SEEK_END)
-        block = BlockType.create(self._headerdata.num_blocks + 1)
-        bt_block = block.to_bytestuple()
-        #print(BLOCK.struct_format, len(bt_block), len(bt_block[-1]))
-        # create an empty byte string with the correct length
-        bin = bytearray(BLOCK.struct_size) # + len(block.data)
-        # pack the BlockType data into the byte string
-        #print(*bt_block[:-1])
-        pack_into(BlockType.get_format(), bin, 0, *bt_block[:-1])
-        # pack the data into the remaining bytes in the byte string
-        pack_into(\
-            f'{BlockType.get_data_size()}s', bin, \
-            calcsize(BlockType.get_format()), bt_block[-1] \
-        )
-        #bin = pack(BLOCK.struct_format, *bt_block)
-        super().write_at(pos, bin)
+        # update the header with the new num of blocks
         self._headerdata.num_blocks += 1
-        return pos
 
-    # read a block at a given position in the file
-    # and load it to memory
-    def read(self, block_pos: int) -> BlockType:
-        buffer = super().read_at(block_pos, self._headerdata.block_size)
-        block = BlockType.make( 
-            unpack(self._header.struct_format, buffer) \
-        )
-        if not self.is_valid_block(block.block_signature): return None
-        return block
-    
-    # write a block into a given position in the file
-    def write(self, block_pos: int, block: BlockType):
-        print(self._header.struct_format, block.to_bytestuple())
+        # create a new block with default data
+        # and convert it to tuple so it can be easily packed
+        block = BlockType.new(self._headerdata.num_blocks)
         bt_block = block.to_bytestuple()
-        # bin = bytearray(BLOCK.struct_size)
-        # pack_into(BlockType.get_format(), bin, 0, *bt_block[:-1])
-        # pack_into(\
-        #     f'{BlockType.get_data_size()}s', bin, \
-        #     calcsize(BlockType.get_format()), block.data \
-        # )
-        super().write_at(\
-            block_pos, \
-            pack(\
-                f'{BlockType.get_format()}{len(bt_block[-1])}s', \
-                *bt_block \
-            ) \
-        )
+
+        # create an empty bytearray with the size of the block
+        bin_block = bytearray(BLOCK_BUFFER) 
+        # get the format of the block, except for the data section
+        _format = BlockType.get_format()
+
+        # pack the block default info into the buffer
+        pack_into(f'{_format}s', bin_block, 0, *bt_block)
+
+        # go to the end of the file and get its absolute position 
+        pos = self._file.seek(0, SEEK_END)
+        # write the binary block at the given position
+        super().write_at(pos, bin_block)
+
+        # return the pos of the new block
+        return pos
 
     # write a list of integers into a block and then 
     # write the block into its blocks file
@@ -91,12 +92,12 @@ class Blocks(IOBase):
 
         # get the start and end position of the block data 
         # (relative to the block data)
-        end = block.end_data + len(bin_u32list)
         start = block.end_data
+        end = start + len(bin_u32list)
 
         # update the data in the block
         block.num_items += len(_list)
-        block.end_data = end #+1?
+        block.end_data = end 
 
         # allow direct access to the memory in the block data 
         # and write to the specified location in memory

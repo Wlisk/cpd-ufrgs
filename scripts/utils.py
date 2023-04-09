@@ -3,6 +3,7 @@ from typing import Any, Generator
 # module imports 
 from ast    import literal_eval    # parse/eval string into python object
 from struct import pack
+# const imports
 from scripts.config \
     import DEV, DATA_DIR, MAX_YEAR, MIN_YEAR, TEST_DIR, INT_SIZE
 
