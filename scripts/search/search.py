@@ -189,14 +189,12 @@ class Searcher:
 
             for movie_id in result_movies.keys():
                 movie_pos: int = result_movies[movie_id]['offset']
-                print(movie_pos)
+
                 _info: MovieType = self.stream_movies.read_item(movie_pos)
-                print(_info)
                 if _info is None: continue
                 
                 _title: TitleType = \
                     self.stream_titles.read_item(_info.title_pos)
-                print(_title, "end")
                 if _title is None: continue
 
                 data: MovieBaseDict = {

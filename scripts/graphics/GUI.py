@@ -22,19 +22,20 @@ def showable_results(results: list[MovieBaseDict]) -> list[str]:
             f'ID: {item["id"]}\n' + \
             f"Title: {item['title']}\n" + \
             f"Year: {item['release_year']}\n" + \
-            f"Rating: {item['rating']}\n" + \
+            f"Rating: {round(item['rating'], 1)}\n" + \
             f"Duration: {item['duration']}min\n" + \
-            f"Genres: {item['genres']}\n" + \
-            f"Countries: {item['countries']}\n" + \
-            f"Companies: {item['companies']}\n" + \
-            "----------------------------------------------------\n"
+            f"Genres: {', '.join(item['genres'])}\n" + \
+            f"Countries: {', '.join(item['countries'])}\n" + \
+            f"Companies: {', '.join(item['companies'])}\n" + \
+            f"{60*'-'}\n"
         )
     return _list
 
 class GraphicInterface:
     root: Tk            # the window root
-    results: list       # saves the results of the search
+    results: list[MovieBaseDict]       # saves the results of the search
     searcher: Searcher  # proccess the search of movies
+    is_reversed: bool
 
     def __init__(self, root: Tk):
         self.root = root
@@ -45,12 +46,56 @@ class GraphicInterface:
         self.results = []
         self.searcher = Searcher()
         self.searcher.load()
+        self.is_reversed = False
 
     def configure_weights(self):
         self.root.columnconfigure(0, weight=1)
         self.root.columnconfigure(1, weight=1)
         for i in range(10):
             self.root.rowconfigure(i, weight=1)
+    
+    # Needs to be changed for final version
+    def show_result(self, skip: bool = False):
+        if not skip: 
+            name    = self.name_entry.get()
+            decade  = self.selected_decade.get()
+            genre   = self.selected_movie_genre.get()
+            country = self.selected_country.get()
+            company = self.selected_company.get()
+
+            # search for the movies with the given specification
+            self.results = self.searcher.movie_search(\
+                name, decade, genre, country, company \
+            )
+            self.results = sorted(\
+                self.results, key=lambda movie: movie['title'] \
+            )
+
+        self.text_result.config(state='normal') 
+        self.text_result.delete('1.0', tk.END) 
+
+        results = showable_results(self.results)
+        if results is not None and len(results) > 0:
+            for result in results:
+                self.text_result.insert(tk.END, result)
+        else: self.text_result.insert(tk.END, "No items found")
+
+        # block text modifications
+        self.text_result.config(state='disabled') 
+        
+    def reverse_fn(self):
+        self.is_reversed = not self.is_reversed
+        self.results = sorted(\
+            self.results, key=lambda movie: movie['title'], \
+            reverse=self.is_reversed \
+        )
+        self.show_result(skip=True)
+
+    def load_csv_fn(self):
+        self.text_result.delete('1.0', tk.END) 
+        proccess_csv(self.text_result)
+        self.create_widgets()
+        self.text_result.insert(tk.END, "CSV loaded with success!")
 
     def create_widgets(self):
         ##############################################
@@ -76,45 +121,11 @@ class GraphicInterface:
         self.search_button = \
             generate_button(self.root, "Search", self.show_result, row=6)
         self.reverse_button = \
-            generate_button(self.root, "Reverse", self.reverse_button, row=7)
+            generate_button(self.root, "Reverse", self.reverse_fn, row=7)
         self.load_csv_button = \
-            generate_button(self.root, "Load CSV", self.load_csv_button, row=8)
+            generate_button(self.root, "Load CSV", self.load_csv_fn, row=8)
 
         self.label_result, self.text_result = label_result(self.root)
-    
-    # Needs to be changed for final version
-    def show_result(self):
-        name    = self.name_entry.get()
-        decade  = self.selected_decade.get()
-        genre   = self.selected_movie_genre.get()
-        country = self.selected_country.get()
-        company = self.selected_company.get()
-
-        # search for the movies with the given specification
-        self.results = self.searcher.movie_search(\
-            name, decade, genre, country, company \
-        )
-
-        self.text_result.delete('1.0', tk.END) 
-
-        results = showable_results(self.results)
-        if results is not None and len(results) > 0:
-            for result in results:
-                self.text_result.insert(tk.END, result)
-        else: self.text_result.insert(tk.END, "No items found")
-
-        # block text modifications
-        self.text_result.config(state='disabled') 
-        
-    def reverse_button(self):
-        #("Insert the reverse button action here")
-        self.show_result()
-
-    def load_csv_button(self):
-        self.text_result.delete('1.0', tk.END) 
-        proccess_csv(self.text_result)
-        self.create_widgets()
-        self.text_result.insert(tk.END, "CSV loaded with success!")
 
     def window_close(self):
         self.searcher.unload()

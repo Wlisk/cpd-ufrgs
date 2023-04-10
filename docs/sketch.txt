@@ -1,2 +1,11 @@
 
 
+I using python 3 with tkinter, and I need a button to show the results of a search in a text section, the other button will sort the results in reverse order and show it in the text section.
+
+'results' will be a list of items found.
+
+So we have two buttons ('search' and 'order')
+
+'search' button will search for a list of similar items and save it in 'results'. after it'll update the window and show the list of results line by line in the text section.
+
+'order' button instead, will order the 'results' list in reverse or ordered order. If the 'results' is already ordered in normal order then order 'results' in reverse order and if the 'results' is reverse ordered then order the results in normal order. after it'll update the text section with the ordered results, showing then line by line
