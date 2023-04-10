@@ -92,11 +92,12 @@ class HeaderType(BaseType):
 @dataclass
 class MovieType(BaseType):
     id: int             # movie id
+    title_pos: int      # poition of the title in the file (title "pointer")
     release_year: int   # year it was released
     duration: float     # duration of the movie in minutes
     rating: float       # votes rating between 0.0 and 10.0
 
-    # create a new instance of this type with the tuple passed 4 args)
+    # create a new instance of this type with the tuple passed 5 args)
     @staticmethod
     def make(data: tuple) -> 'MovieType': return MovieType(*data)
 

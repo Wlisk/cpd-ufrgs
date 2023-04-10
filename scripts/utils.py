@@ -2,7 +2,7 @@
 from typing import Any, Generator
 # module imports 
 from ast    import literal_eval    # parse/eval string into python object
-from struct import pack
+from struct import pack, unpack
 # const imports
 from scripts.config \
     import DEV, DATA_DIR, MAX_YEAR, MIN_YEAR, TEST_DIR, INT_SIZE
@@ -91,3 +91,32 @@ def u32list_to_bytes(u32_list: list[int]) -> bytearray:
         offset += 4
 
     return buffer
+
+# converts a list of bytes into a list of integers
+# for each 4 bytes, convert into an integer
+def bytes_to_u32list(bin: bytes|bytearray, num_ints: int) -> list[int]:
+    # allow direct memory access to the buffer
+    mem_buffer = memoryview(bin)
+
+    # unpack all the integers from the buffer
+    return list( unpack(f"<{num_ints}I", mem_buffer) )
+
+#--------------------------------------------------------------------#
+# return a dict union of two dicts
+# if there is diffeent values for the same key, 
+# then update the key value with the second dict key value
+def exclusive_union(dict_1: dict, dict_2: dict) -> dict:
+    # check if the dicts are valid dicts
+    if dict_1 is None: return dict_2
+    if dict_2 is None: return dict_1
+    # add keys that are in both dicts
+    ex_union = { \
+        key: dict_1[key] \
+        for key in dict_1 if key in dict_2 \
+    } 
+    # update the values so it'll have the values of the second dict
+    ex_union.update({ \
+        key: dict_2[key] \
+        for key in dict_2 if key in dict_1 \
+    }) 
+    return ex_union

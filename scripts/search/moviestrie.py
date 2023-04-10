@@ -1,17 +1,24 @@
+# type imports
+from typing import TypedDict
 # module imports
 from pickle import load, dump
+
+class TrieData(TypedDict):
+    id: int                             # the movie id 
+    offset: int                         # the movie pos in the entity file
+    genres: list[str]
+    countries: list[str]
+    companies: list[str]
 
 # the trie structure per se
 # each node saves/has (id, offset) even if it's no used
 class TrieNode:
     children: dict[str, 'TrieNode']     # the Trie node (the Trie per se)
-    id: int                             # the movie id 
-    offset: int                         # the movie pos in the entity file
+    data: TrieData = None               # the trie node data
 
     def __init__(self):
         self.children   = {}
-        self.id         = 0
-        self.offset     = 0
+        self.data = None
 
 # Trie to search for movies
 class MoviesTrie:
@@ -23,21 +30,20 @@ class MoviesTrie:
         self.filename   = filename
 
     # add a movie id and its offset in the entity file to the trie
-    def add(self, id: int, offset: int):
+    def add(self, data: TrieData):
         node = self.root
         # it creates a string with a 32 (bits) sized binary of the id
         # pads it with zeros to the left if needed and iterate through it
-        for bit in format(id, '032b'):
+        for bit in format(data['id'], '032b'):
             # create a new node for the bit if not founded
             if bit not in node.children:
                 node.children[bit] = TrieNode()
             node = node.children[bit]
         # update the data for this position
-        node.id = id
-        node.offset = offset
+        node.data = data
 
     # search for a movie id in the trie
-    def search(self, id: int) -> tuple[int, int]:
+    def search(self, id: int) -> tuple[int, TrieData]:
         # initialize with the root
         node = self.root
         # it creates a string with a 32 (bits) sized binary of the id
@@ -48,7 +54,7 @@ class MoviesTrie:
             # go to the next 'bit' node
             node = node.children[bit]
         # if all 'bits' matched, then we found our item in the Trie
-        return (node.id, node.offset) if node.id is not None else None
+        return (id, node.data) if node.data is not None else None
 
     # save the trie into disk (overwrites already existing file)
     def save(self):

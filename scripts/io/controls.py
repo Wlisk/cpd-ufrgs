@@ -49,7 +49,7 @@ ENTITY: Final[ dict[str, EntityInfo] ] = {
     ),
     'movies': EntityInfo( \
         name = 'movies', \
-        struct_size_format = 'IHff', \
+        struct_size_format = 'IIHff', \
         classtype = MovieType \
     )
 }

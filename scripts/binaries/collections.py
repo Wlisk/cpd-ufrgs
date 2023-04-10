@@ -43,11 +43,11 @@ def generate_blocks(collections: list[tuple[dict[str, list[int]], Blocks, Serial
                 )
                 # update the id for the new items to come
                 idx += 1
-                print(f'Creating new block for [{item}]')
+                #print(f'Creating new block for [{item}]')
 
             else: 
                 block_pos = found.block_pos
-                print(f'Block for [{item}] already exists')
+                #print(f'Block for [{item}] already exists')
 
             # print(block_pos, sep='\n')
             item_block: BlockType = _block.read(block_pos)
@@ -57,7 +57,7 @@ def generate_blocks(collections: list[tuple[dict[str, list[int]], Blocks, Serial
             _len: int = len(_dict[item])
             if _len: 
                 _block.write_into(block_pos, item_block, _dict[item])
-                print(f'({_len}) elements were written into [{item}] block')
+                #print(f'({_len}) elements were written into [{item}] block')
                 
         _stream.close()
         _block.close()

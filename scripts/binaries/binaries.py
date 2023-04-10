@@ -2,9 +2,10 @@
 from scripts.io.iobase                  import IOBase
 from scripts.io.serial                  import Serial
 from scripts.io.blocks                  import Blocks
-from scripts.search.moviestrie          import MoviesTrie
+from scripts.search.moviestrie          import MoviesTrie, TrieData
 from scripts.search.titlestrie          import TitlesTrie
-from scripts.types                      import MovieType, CollectionType
+from scripts.types                      import \
+    MovieType, CollectionType, TitleType
 # module imports
 from scripts.utils                      import wich_decade, safe_parse
 from scripts.proccess.readmovies_csv    import readmovies_csv
@@ -15,8 +16,9 @@ from scripts.config                     import MOVIESTRIE, TITLESTRIE
 # generate all binaries files to search for data
 # the files for entity and relationships
 def generate_binaries(csv_filename):
-    # initialize the movies and title streams (r/w entity file)
+    # initialize the movies stream (r/w entity file)
     movies_stream       = Serial('movies', MovieType)
+    titles_stream       = Serial('titles', TitleType)
     # initialize the collection streams (r/w entity file)
     genres_stream       = Serial('genres', CollectionType)
     countries_stream    = Serial('countries', CollectionType)
@@ -31,8 +33,9 @@ def generate_binaries(csv_filename):
     companies:  dict[str, list[int]] = dict()
     decades:    dict[str, list[int]] = dict()
 
-    # create a collections stream "manager" 
+    # create stream "manager"s 
     # to "automatically" open/close the streams
+    stream_manager: list[IOBase] = [ movies_stream, titles_stream ]
     stream_c_manager: list[tuple[Serial, dict[str, list[int]]]] = [ \
         (genres_stream,       genres), \
         (countries_stream, countries), \
@@ -50,12 +53,12 @@ def generate_binaries(csv_filename):
             _dict[item.name] = []
         stream.close()
 
-    # open movies stream
-    movies_stream.open()
+    # open movies/titles stream
+    for stream in stream_manager: stream.open()
 
-    #! just for test purposes
-    max_idx: int    = 2**64
-    idx: int        = 0
+    # get id from the num of items in the movies/titles entity file
+    idx: int = titles_stream._headerdata.num_items + 1
+    # max_idx = idx + 10
     
     movies: MoviesTrie = MoviesTrie.load(MOVIESTRIE)
     titles: TitlesTrie = TitlesTrie.load(TITLESTRIE)
@@ -65,19 +68,30 @@ def generate_binaries(csv_filename):
     for movie in readmovies_csv(csv_filename):
         # check if a movie is not already added
         # based on its movie id
-        result = movies.search(movie['id'])
+        result: tuple(int, TrieData) = movies.search(movie['id'])
         if result is not None: continue
+
+        # write the title into its respective entity file
+        _title = TitleType(idx, movie['id'], movie['title'])
+        title_pos: int = titles_stream.write(_title)
 
         movie_year = safe_parse(movie['release_year'], int, 0)
         # write the movie into its respective entity file
         _movie = MovieType(\
-            movie['id'], movie_year, \
+            movie['id'], title_pos, movie_year, \
             movie['duration'], movie['rating'] \
         )
         movie_pos: int = movies_stream.write(_movie)
 
         # add the movie to the Tries
-        movies.add(movie['id'], movie_pos)
+        trie_data: TrieData = {\
+            'id': movie['id'], \
+            'offset': movie_pos, \
+            'genres': movie['genres'], \
+            'countries': movie['countries'], \
+            'companies': movie['companies'] \
+        } 
+        movies.add(trie_data)
         titles.add(movie['id'], movie['title'])
 
         # iterate through each item in the collection
@@ -86,6 +100,7 @@ def generate_binaries(csv_filename):
         # and add to it the id of the movie
         for genre in movie['genres']:
             genres.setdefault(genre, []).append(movie['id'])
+        print(movie['genres'])
 
         for country in movie['countries']:
             countries.setdefault(country, []).append(movie['id'])
@@ -97,12 +112,12 @@ def generate_binaries(csv_filename):
         decades.setdefault(this_decade, []).append(movie['id'])
 
         idx += 1
-        print(f'Added {idx}: ', movie['title'])
+        #print(f'Added {idx}: ', movie['title'])
 
-        if idx == max_idx: break
+        #if idx == max_idx: break
 
-    # close the movies stream
-    movies_stream.close()
+    # close the movies/titles stream
+    for stream in stream_manager: stream.close()
     # save the Tries into disk
     movies.save()
     titles.save()

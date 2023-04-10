@@ -32,6 +32,7 @@ BLOCK_SIGNATURE: Final  = -1
 BASE_DIR: Final = abspath('.')  # project directory (if main.py executed)
 DATA_DIR: Final = f'{BASE_DIR}/data'
 TEST_DIR: Final = f'{BASE_DIR}/tests/data'
+DATASETS_DIR: Final = f'{BASE_DIR}/datasets'
 
 def get_trie_fname(trie_name: str) -> str: 
     return f'{DATA_DIR}/{trie_name}.trie.pickle'

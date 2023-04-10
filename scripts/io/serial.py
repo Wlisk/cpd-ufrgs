@@ -62,6 +62,21 @@ class Serial(IOBase):
             # as there is no more entity data to read
             if len(item) < size: break
             # return the item read
-            yield  self._classtype.make(\
+            yield self._classtype.make(\
                 unpack(self._entity.struct_format, item) \
             ).normalize()
+
+    # reads an item at the given position
+    def read_item(self, pos: int) -> AllEType:
+        # save the size of the item structure
+        size = self._entity.struct_size
+        # computes the offset/position of the file to start reading
+        pos = pos if pos > 0 else self._header.struct_size
+        self._file.seek(pos)
+        item = self._file.read(size)
+        # if no items to read (based on the read len)
+        if len(item) < size: return None
+        # return the item read
+        return self._classtype.make(\
+            unpack(self._entity.struct_format, item) \
+        ).normalize()

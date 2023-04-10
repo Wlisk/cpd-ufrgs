@@ -3,7 +3,8 @@ from scripts.io.iobase  import IOBase
 from scripts.types      import BlockHeaderType, BlockType
 # module imports 
 from struct             import calcsize, pack, unpack, pack_into
-from scripts.utils      import get_filename, u32list_to_bytes
+from scripts.utils      import \
+    get_filename, u32list_to_bytes, bytes_to_u32list
 # const imports
 from io                 import SEEK_END
 from scripts.config     import BLOCK_SIGNATURE, INT_SIZE, BLOCK_BUFFER
@@ -99,4 +100,11 @@ class Blocks(IOBase):
         
         # finally write the block into the blocks file at the given pos
         self.write(block_pos, block)
+
+    # read only the data of the block at the given position
+    def read_data(self, block_pos: int) -> list[int]:
+        block: BlockType = self.read(block_pos)
+        if block is None: return []
+        return bytes_to_u32list(block.data, block.num_items)
+
 
