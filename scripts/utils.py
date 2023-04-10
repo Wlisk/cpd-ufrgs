@@ -83,7 +83,7 @@ def u32list_to_bytes(u32_list: list[int]) -> bytearray:
     # notice that python without this direct access
     # would cause extra allocations of memory when using slice
     mem_buffer = memoryview(buffer)
-    buffer = bytearray()
+    
     # loop through each number and put then into the buffer
     # with the number correctly converted to be save
     offset = 0

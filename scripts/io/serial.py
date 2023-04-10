@@ -7,7 +7,7 @@ from struct             import pack, iter_unpack, unpack
 from scripts.utils      import get_filename
 # const imports
 from io                 import SEEK_END
-from scripts.binaries.controls import HEADER
+from scripts.io.controls import HEADER
 
 # tools for read/write entity files
 class Serial(IOBase):

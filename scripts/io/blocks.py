@@ -7,7 +7,7 @@ from scripts.utils      import get_filename, u32list_to_bytes
 # const imports
 from io                 import SEEK_END
 from scripts.config     import BLOCK_SIGNATURE, INT_SIZE, BLOCK_BUFFER
-from scripts.binaries.controls import HEADER_BLOCK, BLOCK
+from scripts.io.controls import HEADER_BLOCK
 
 # tools for read/write entity/blocks files based on blocks
 class Blocks(IOBase):
@@ -90,19 +90,13 @@ class Blocks(IOBase):
         # convert the list into its binary representation
         bin_u32list = u32list_to_bytes(_list)
 
-        # get the start and end position of the block data 
-        # (relative to the block data)
-        start = block.end_data
-        end = start + len(bin_u32list)
-
         # update the data in the block
         block.num_items += len(_list)
-        block.end_data = end 
+        block.end_data += len(bin_u32list)
 
-        # allow direct access to the memory in the block data 
-        # and write to the specified location in memory
-        mem_datablock = memoryview(block.data)
-        mem_datablock[start:end] = bin_u32list
+        # concatenates the old and the new data (both binary)
+        block.data += bin_u32list
         
+        # finally write the block into the blocks file at the given pos
         self.write(block_pos, block)
 

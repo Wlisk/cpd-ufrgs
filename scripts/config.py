@@ -33,9 +33,13 @@ BASE_DIR: Final = abspath('.')  # project directory (if main.py executed)
 DATA_DIR: Final = f'{BASE_DIR}/data'
 TEST_DIR: Final = f'{BASE_DIR}/tests/data'
 
+def get_trie_fname(trie_name: str) -> str: 
+    return f'{DATA_DIR}/{trie_name}.trie.pickle'
+
 # files
 CSVFILE: Final      = f'{BASE_DIR}/datasets/movies.csv'
-MOVIESTRIE: Final   = f'{DATA_DIR}/movies.trie.pickle'
+MOVIESTRIE: Final   = get_trie_fname('movies')
+TITLESTRIE: Final   = get_trie_fname('titles')
 
 #--------------------------------------------------------------------#
 

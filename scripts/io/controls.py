@@ -1,15 +1,16 @@
 # type imports
-from typing import Final
-from scripts.types \
-    import EntityInfo, CollectionType, MovieType, TitleType, \
+from typing         import Final
+from scripts.types  import \
+    EntityInfo, CollectionType, MovieType, TitleType, \
     HeaderType, BlockHeaderType, BlockType
 
+# module 'struct' pack and unpack formats
 # string float char u16 u32 u64
-#   Ns     f    B    H   I   Q  -> unsigned, N is the length of the string
+#  {}s     f    B    H   I   Q  -> unsigned, {} is the length of the string
 #               b    h   i   q  -> for signed
 # '<' is for little endian format
 
-
+#--------------------------------------------------------------------#
 # all entitie files have a header with the quantity of items in them 
 # and the size occupied in bytes for each item 
 # num_items:u32, item_size:u16 -> 'IH'
@@ -19,17 +20,12 @@ HEADER: Final[EntityInfo] = EntityInfo( \
     classtype = HeaderType \
 )
 
-# holds information about all entities
+# holds information about all entities files
 ENTITY: Final[ dict[str, EntityInfo] ] = {
     'companies': EntityInfo( \
         name = 'companies', \
         struct_size_format = 'HI30s', \
         classtype = CollectionType \
-    ),
-    'titles': EntityInfo( \
-        name = 'titles', \
-        struct_size_format = 'II80s', \
-        classtype = TitleType \
     ),
     'genres': EntityInfo( \
         name = 'genres', \
@@ -41,18 +37,24 @@ ENTITY: Final[ dict[str, EntityInfo] ] = {
         struct_size_format = 'HI30s', \
         classtype = CollectionType \
     ),
-    'movies': EntityInfo( \
-        name = 'movies', \
-        struct_size_format = 'IIHff', \
-        classtype = MovieType \
-    ),
     'decades': EntityInfo( \
         name = 'decades', \
-        struct_size_format = 'HIH', \
+        struct_size_format = 'HI2s', \
         classtype = CollectionType \
+    ),
+    'titles': EntityInfo( \
+        name = 'titles', \
+        struct_size_format = 'II80s', \
+        classtype = TitleType \
+    ),
+    'movies': EntityInfo( \
+        name = 'movies', \
+        struct_size_format = 'IHff', \
+        classtype = MovieType \
     )
 }
 
+#--------------------------------------------------------------------#
 # all entities/relationships files based on blocks have a header with the quantity of blocks in them and the size occupied in bytes for each block
 # num_blocks:u16, block_size:u32 -> 'HI'
 HEADER_BLOCK: Final[EntityInfo] = EntityInfo( \
@@ -61,7 +63,8 @@ HEADER_BLOCK: Final[EntityInfo] = EntityInfo( \
     classtype = BlockHeaderType \
 )
 
-# 
+# information for the blocks in a blocks file
+# BlockType.get_format()[1:] removes the '<' from the format
 BLOCK: Final[EntityInfo] = EntityInfo( \
     name = 'block', \
     struct_size_format = \

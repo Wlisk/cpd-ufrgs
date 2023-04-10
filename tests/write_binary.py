@@ -9,7 +9,7 @@ from collections import namedtuple
 from io import BufferedReader
 
 import struct
-from scripts.binaries.controls \
+from scripts.io.controls \
     import EntityInfo, ENTITY, HEADER, EntityTuple, BaseTuple, HeaderTuple
 from scripts.entity.io import \
     read_header, read_data, read_data_at, read_data_from_index, \
