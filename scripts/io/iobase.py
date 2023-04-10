@@ -24,6 +24,28 @@ class IOBase:
         self._headerdata = None
         self._classtype = None
 
+    # open the stream to read/write an entity/block file
+    def open(self):
+        if self._file == None:
+            # if the file exists, open in read and write b-mode
+            try:    
+                self._file = open(self._filename, 'rb+')
+                self._headerdata = self.read_header()
+            # otherwise create the file and open in write and read b-mode
+            except: 
+                self._file = open(self._filename, 'wb+')
+                # notice that if the file does not exists, after creating it
+                # its total size would be 0, so to not cause errors 
+                # we write its header right after creating it
+                self.write_header()
+
+    # close the stream of an entity/block file
+    def close(self):
+        if self._file != None: 
+            self.write_header() # update the header before closing
+            self._file.close()
+            self._file = None
+
     # write data at some position in the file
     def write_at(self, pos: int, data: bytes|bytearray):
         self._file.seek(pos)
@@ -50,25 +72,3 @@ class IOBase:
         bt_data = self._headerdata.to_bytestuple()
         # converts to a binary packed structure and write into the file
         self.write_at(0, pack(self._header.struct_format, *bt_data))
-
-    # open the stream to read/write an entity/block file
-    def open(self):
-        if self._file == None:
-            # if the file exists, open in read and write b-mode
-            try:    
-                self._file = open(self._filename, 'rb+')
-                self._headerdata = self.read_header()
-            # otherwise create the file and open in write and read b-mode
-            except: 
-                self._file = open(self._filename, 'wb+')
-                # notice that if the file does not exists, after creating it
-                # its total size would be 0, so to not cause errors 
-                # we write its header right after creating it
-                self.write_header()
-
-    # close the stream of an entity/block file
-    def close(self):
-        if self._file != None: 
-            self.write_header() # update the header before closing
-            self._file.close()
-            self._file = None

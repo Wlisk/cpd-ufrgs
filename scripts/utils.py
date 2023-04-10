@@ -33,13 +33,12 @@ def parse_str_to_listdict(_str:str) -> list[dict]:
 
 # gets a year from an string (year-month-day format)
 def parse_get_year(_str: str) -> int: 
-    year_str = _str.split('-')[0]
-    return safe_parse(year_str, int, 0)
+    return _str.split('-')[0]
     
 # gets a list of names (strings) from a list of objects inside a string
 def parse_get_names(_str: str) -> list[str]:
     l = parse_str_to_listdict(_str)
-    if len(l) > 0 and type(l[0]) == dict:
+    if type(l) == list and len(l) > 0 and type(l[0]) == dict:
         return [item['name'] for item in l]
     return []
 

@@ -32,10 +32,10 @@ class Blocks(IOBase):
         buffer = super().read_at(block_pos, self._headerdata.block_size)
         # get the format for the block, except the data section
         _format = BlockType.get_format()
-        # convert the binary into (BlockType), except data section
-        block = BlockType.make( unpack(_format, buffer) )
         # get the size in bytes occupied by the block, except data section
         offset = calcsize(_format)
+        # convert the binary into (BlockType), except data section
+        block = BlockType.make( unpack(_format, buffer[:offset]) )
         # get the size in bytes occupied by the data section items
         size = block.num_items * INT_SIZE
         # get the data section items (kept in binary)

@@ -15,7 +15,7 @@ class MovieBaseDict(TypedDict):
     genres: list[str]
     companies: list[str]
     countries: list[str]
-    release_year: int
+    release_year: str
     duration: float
     rating: float
 

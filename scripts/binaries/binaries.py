@@ -6,14 +6,15 @@ from scripts.search.moviestrie          import MoviesTrie
 from scripts.search.titlestrie          import TitlesTrie
 from scripts.types                      import MovieType, CollectionType
 # module imports
-from scripts.utils                      import wich_decade
+from scripts.utils                      import wich_decade, safe_parse
 from scripts.proccess.readmovies_csv    import readmovies_csv
 from scripts.binaries.collections       import generate_blocks
 # const imports
-from scripts.config                 import CSVFILE, MOVIESTRIE, TITLESTRIE
+from scripts.config                     import MOVIESTRIE, TITLESTRIE
 
-# 
-def generate_binaries():
+# generate all binaries files to search for data
+# the files for entity and relationships
+def generate_binaries(csv_filename):
     # initialize the movies and title streams (r/w entity file)
     movies_stream       = Serial('movies', MovieType)
     # initialize the collection streams (r/w entity file)
@@ -28,7 +29,7 @@ def generate_binaries():
     genres:     dict[str, list[int]] = dict()
     countries:  dict[str, list[int]] = dict()
     companies:  dict[str, list[int]] = dict()
-    decades:    dict[int, list[int]] = dict()
+    decades:    dict[str, list[int]] = dict()
 
     # create a collections stream "manager" 
     # to "automatically" open/close the streams
@@ -53,22 +54,24 @@ def generate_binaries():
     movies_stream.open()
 
     #! just for test purposes
-    max_idx: int    = 50
+    max_idx: int    = 2**64
+    idx: int        = 0
     
     movies: MoviesTrie = MoviesTrie.load(MOVIESTRIE)
     titles: TitlesTrie = TitlesTrie.load(TITLESTRIE)
 
     # iterate through all movies and add their info into the entity files
     # notice that only title and movie entity files are write into
-    for movie in readmovies_csv(CSVFILE):
+    for movie in readmovies_csv(csv_filename):
         # check if a movie is not already added
         # based on its movie id
         result = movies.search(movie['id'])
         if result is not None: continue
 
+        movie_year = safe_parse(movie['release_year'], int, 0)
         # write the movie into its respective entity file
         _movie = MovieType(\
-            movie['id'], movie['release_year'], \
+            movie['id'], movie_year, \
             movie['duration'], movie['rating'] \
         )
         movie_pos: int = movies_stream.write(_movie)
@@ -90,10 +93,11 @@ def generate_binaries():
         for company in movie['companies']:
             companies.setdefault(company, []).append(movie['id'])
         
-        this_decade = wich_decade(movie['release_year'])
+        this_decade = str(wich_decade(movie_year))
         decades.setdefault(this_decade, []).append(movie['id'])
 
         idx += 1
+        print(f'Added {idx}: ', movie['title'])
 
         if idx == max_idx: break
 
@@ -107,7 +111,7 @@ def generate_binaries():
     # for all collections, so it does not need code repetition
     # we have a dict, each key witha list of IDs
     # and we have a blocks stream and a serial stream
-    collections: list[tuple[dict[str|int, list[int]], Blocks, Serial]] = [\
+    collections: list[tuple[dict[str, list[int]], Blocks, Serial]] = [\
         (genres,    Blocks('genres'),       genres_stream), \
         (countries, Blocks('countries'), countries_stream), \
         (companies, Blocks('companies'), companies_stream), \

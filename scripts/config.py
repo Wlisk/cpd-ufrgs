@@ -5,7 +5,7 @@ from os.path    import abspath
 
 #--------------------------------------------------------------------#
 # set if we are in development or production mode
-DEV: Final = True
+DEV: Final = False
 
 NOT_FOUND: Final = -1
 
@@ -13,7 +13,7 @@ NOT_FOUND: Final = -1
 # PROCCESS
 
 # filters settings
-MIN_VOTES: Final        = 6.0
+MIN_VOTES: Final        = 5.0
 MIN_VOTES_COUNT: Final  = 10
 MAX_TITLE_SIZE: Final   = 80 - 1
 
@@ -24,7 +24,7 @@ KB: Final = 1024       # 1KB
 MB: Final = 1024 * KB  # 1MB
 
 # blocks constants
-BLOCK_SIZE: Final       = 1*MB
+BLOCK_SIZE: Final       = 64*KB
 BLOCK_BUFFER: Final     = BLOCK_SIZE*b'0' # a 1mb binary buffer
 BLOCK_SIGNATURE: Final  = -1
 

@@ -24,22 +24,22 @@ HEADER: Final[EntityInfo] = EntityInfo( \
 ENTITY: Final[ dict[str, EntityInfo] ] = {
     'companies': EntityInfo( \
         name = 'companies', \
-        struct_size_format = 'HI30s', \
+        struct_size_format = 'HI50s', \
         classtype = CollectionType \
     ),
     'genres': EntityInfo( \
         name = 'genres', \
-        struct_size_format = 'HI20s', \
+        struct_size_format = 'HI30s', \
         classtype = CollectionType \
     ),
     'countries': EntityInfo( \
         name = 'countries', \
-        struct_size_format = 'HI30s', \
+        struct_size_format = 'HI50s', \
         classtype = CollectionType \
     ),
     'decades': EntityInfo( \
         name = 'decades', \
-        struct_size_format = 'HI2s', \
+        struct_size_format = 'HI10s', \
         classtype = CollectionType \
     ),
     'titles': EntityInfo( \

@@ -8,7 +8,7 @@ from scripts.search.controls            import found_in_entity, by_name
 # add to or create entities file or blocks files
 # receives a list o tuples data contains a dict, 
 # a blocks file stream and a entity file stream
-def generate_blocks(collections: list[tuple[dict[str|int, list[int]], Blocks, Serial]]):
+def generate_blocks(collections: list[tuple[dict[str, list[int]], Blocks, Serial]]):
     # loop through the collections
     for collection in collections:
         # _dict:dict[str|int, list[int]], _block:Blocks, _stream:Serial
@@ -36,18 +36,28 @@ def generate_blocks(collections: list[tuple[dict[str|int, list[int]], Blocks, Se
             if found is None: 
                 # create a new block in the blocks file for this new item
                 block_pos: int = _block.create()
+
                 # write the new item into the entity file
-                _stream.write( CollectionType(idx, block_pos, item) )
+                _stream.write( \
+                    CollectionType(idx, block_pos, bytes(item, 'utf-8')) \
+                )
                 # update the id for the new items to come
                 idx += 1
-            else: block_pos = found.block_pos
+                print(f'Creating new block for [{item}]')
 
+            else: 
+                block_pos = found.block_pos
+                print(f'Block for [{item}] already exists')
+
+            # print(block_pos, sep='\n')
             item_block: BlockType = _block.read(block_pos)
 
             # add a list of integers into the block
             # if there is new elements (IDs)
-            if len(_dict[item]): 
+            _len: int = len(_dict[item])
+            if _len: 
                 _block.write_into(block_pos, item_block, _dict[item])
+                print(f'({_len}) elements were written into [{item}] block')
                 
         _stream.close()
         _block.close()
