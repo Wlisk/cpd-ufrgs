@@ -3,8 +3,8 @@
 from scripts.graphics.GUI import GraphicInterface
 from tkinter import Tk
 
-from scripts.config import CSVFILE
-from scripts.binaries.binaries import generate_binaries
+#from scripts.config import CSVFILE
+#from scripts.binaries.binaries import generate_binaries
 
 def main():
     root = Tk()
