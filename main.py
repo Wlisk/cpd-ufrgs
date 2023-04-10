@@ -7,8 +7,6 @@ from scripts.config import CSVFILE
 from scripts.binaries.binaries import generate_binaries
 
 def main():
-    generate_binaries(CSVFILE)
-
     root = Tk()
     root.resizable(False, False)
     interface = GraphicInterface(root)
@@ -17,5 +15,6 @@ def main():
     root.mainloop()
 
 if __name__ == "__main__":
+    #generate_binaries(CSVFILE)
     main()
 

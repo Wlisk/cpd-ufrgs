@@ -34,11 +34,11 @@ FILTERS: Final[ dict[str, Callable[[str], bool]] ] =  {
     'title':        lambda v: v and len(v) >= MAX_TITLE_SIZE,
     'release_date': lambda v: v and not ('-' in v),
     'genres': \
-        lambda v: v and (len(v) == 0 or type(v) != str or len(v) >= 29),
+        lambda v: v and (len(v) == 0 or type(v) != str or len(v) <= 29),
     'production_countries': \
-        lambda v: v and (len(v) == 0 or type(v) != str or len(v) >= 49),
+        lambda v: v and (len(v) == 0 or type(v) != str or len(v) <= 49),
     'production_companies': \
-        lambda v: v and (len(v) == 0 or type(v) != str or len(v) >= 49)
+        lambda v: v and (len(v) == 0 or type(v) != str or len(v) <= 49)
 }
 
 # used to rename a column from the movie dictionary

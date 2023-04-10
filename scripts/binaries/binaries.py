@@ -58,7 +58,7 @@ def generate_binaries(csv_filename):
 
     # get id from the num of items in the movies/titles entity file
     idx: int = titles_stream._headerdata.num_items + 1
-    # max_idx = idx + 10
+    max_idx = idx + 10
     
     movies: MoviesTrie = MoviesTrie.load(MOVIESTRIE)
     titles: TitlesTrie = TitlesTrie.load(TITLESTRIE)
@@ -100,7 +100,6 @@ def generate_binaries(csv_filename):
         # and add to it the id of the movie
         for genre in movie['genres']:
             genres.setdefault(genre, []).append(movie['id'])
-        print(movie['genres'])
 
         for country in movie['countries']:
             countries.setdefault(country, []).append(movie['id'])
@@ -114,7 +113,7 @@ def generate_binaries(csv_filename):
         idx += 1
         #print(f'Added {idx}: ', movie['title'])
 
-        #if idx == max_idx: break
+        if idx == max_idx: break
 
     # close the movies/titles stream
     for stream in stream_manager: stream.close()

@@ -21,6 +21,7 @@ def readmovies_csv(csvfilename: str) -> Generator[MovieBaseDict, None, None]:
             # iterate through all the columns of the row
             # dic.items() return a list of tuples with key and value
             for colname, value in csvrow.items():
+                if type(value) == str: value = value.strip()
                 # test if a column is in the filters, 
                 # and tries to execute the correspondent function, 
                 # otherwise execute the default false-return-function

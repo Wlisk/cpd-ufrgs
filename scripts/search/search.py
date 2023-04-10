@@ -79,7 +79,7 @@ class Searcher:
     def unload(self):
         for stream in self.stream_manager: stream.close()
 
-    def search_collection(self, data_list:list[CollectionType], item: str, blocks: Blocks) -> list[tuple[int, int]]:
+    def search_collection(self, data_list:list[CollectionType], item: str, blocks: Blocks) -> list[tuple[int, TrieData]]:
         result_list = []
         # verify if we have the decade passed
         item_found: CollectionType = found_in_entity(\
@@ -106,12 +106,12 @@ class Searcher:
 
         # list of results for each attribute for search
         result_titles:  dict[int, str] = None
-        result_movies:  dict[int, int] = None
+        result_movies:  dict[int, TrieData] = None
         # results for the ids
-        result_decade:  dict[int, int] = None
-        result_genre:   dict[int, int] = None
-        result_country: dict[int, int] = None
-        result_company: dict[int, int] = None
+        result_decade:  dict[int, TrieData] = None
+        result_genre:   dict[int, TrieData] = None
+        result_country: dict[int, TrieData] = None
+        result_company: dict[int, TrieData] = None
 
         # get all the results for the title
         if name != 'None' and len(name) > 0:
@@ -166,12 +166,10 @@ class Searcher:
             result_movies = exclusive_union(result_titles, result_movies)
             
             for movie_id in result_movies.keys():
-                movie_pos: int = result_movies[movie_id]
+                movie_pos: int = result_movies[movie_id]['offset']
+
                 _info: MovieType = self.stream_movies.read_item(movie_pos)
                 if _info is None: continue
-
-                _info_trie: TrieData = self.trie_movies.search(movie_id)
-                if _info_trie is None: continue
 
                 data: MovieBaseDict = {
                     'id': movie_id,
@@ -179,9 +177,9 @@ class Searcher:
                     'duration': _info.duration,
                     'release_year': _info.release_year,
                     'rating': _info.rating,
-                    'genres': _info_trie['genres'],
-                    'countries': _info_trie['countries'],
-                    'companies': _info_trie['companies']
+                    'genres': result_movies[movie_id]['genres'],
+                    'countries': result_movies[movie_id]['countries'],
+                    'companies': result_movies[movie_id]['companies']
                 }
                 _movies.append(data)
 
@@ -190,16 +188,16 @@ class Searcher:
             print("search only for attr")
 
             for movie_id in result_movies.keys():
-                movie_pos: int = result_movies[movie_id]
+                movie_pos: int = result_movies[movie_id]['offset']
+                print(movie_pos)
                 _info: MovieType = self.stream_movies.read_item(movie_pos)
+                print(_info)
                 if _info is None: continue
                 
                 _title: TitleType = \
                     self.stream_titles.read_item(_info.title_pos)
+                print(_title, "end")
                 if _title is None: continue
-
-                _info_trie: TrieData = self.trie_movies.search(movie_id)
-                if _info_trie is None: continue
 
                 data: MovieBaseDict = {
                     'id': movie_id,
@@ -207,9 +205,9 @@ class Searcher:
                     'duration': _info.duration,
                     'release_year': _info.release_year,
                     'rating': _info.rating,
-                    'genres': _info_trie['genres'],
-                    'countries': _info_trie['countries'],
-                    'companies': _info_trie['companies']
+                    'genres': result_movies[movie_id]['genres'],
+                    'countries': result_movies[movie_id]['countries'],
+                    'companies': result_movies[movie_id]['companies']
                 }
                 _movies.append(data)
             
@@ -220,6 +218,7 @@ class Searcher:
             for movie_id in result_titles.keys():
                 _info_trie: TrieData = self.trie_movies.search(movie_id)
                 if _info_trie is None: continue
+                _info_trie = _info_trie[1]
                 
                 movie_pos = _info_trie['offset']
                 _info: MovieType = self.stream_movies.read_item(movie_pos)

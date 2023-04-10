@@ -26,7 +26,8 @@ def showable_results(results: list[MovieBaseDict]) -> list[str]:
             f"Duration: {item['duration']}min\n" + \
             f"Genres: {item['genres']}\n" + \
             f"Countries: {item['countries']}\n" + \
-            f"Companies: {item['companies']}\n" \
+            f"Companies: {item['companies']}\n" + \
+            "----------------------------------------------------\n"
         )
     return _list
 
