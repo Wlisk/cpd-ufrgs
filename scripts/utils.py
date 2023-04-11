@@ -16,7 +16,7 @@ def bytes_to_str(data: bytes|bytearray) -> str:
 
 # converts a string to a string of bytes
 def str_to_bytes(data: str) -> bytes:
-    if type(data) != str: return data
+    #if type(data) != str: return data
     return bytes(data, 'utf-8')
 
 #--------------------------------------------------------------------#

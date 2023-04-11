@@ -5,6 +5,7 @@ from tkinter import Tk
 
 #from scripts.config import CSVFILE
 #from scripts.binaries.binaries import generate_binaries
+#from scripts.proccess.readmovies_csv import readmovies_csv
 
 def main():
     root = Tk()

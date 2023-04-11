@@ -20,31 +20,38 @@ HEADER: Final[EntityInfo] = EntityInfo( \
     classtype = HeaderType \
 )
 
+# controls the string size for each entity info
+SIZE_GENRE: Final = 24
+SIZE_COUNTRY: Final = 34
+SIZE_COMPANY: Final = 35
+SIZE_DECADE: Final = 6
+SIZE_TITLE: Final = 80
+
 # holds information about all entities files
 ENTITY: Final[ dict[str, EntityInfo] ] = {
     'companies': EntityInfo( \
         name = 'companies', \
-        struct_size_format = 'HI50s', \
+        struct_size_format = f'HI{SIZE_COMPANY}s', \
         classtype = CollectionType \
     ),
     'genres': EntityInfo( \
         name = 'genres', \
-        struct_size_format = 'HI30s', \
+        struct_size_format = f'HI{SIZE_GENRE}s', \
         classtype = CollectionType \
     ),
     'countries': EntityInfo( \
         name = 'countries', \
-        struct_size_format = 'HI50s', \
+        struct_size_format = f'HI{SIZE_COUNTRY}s', \
         classtype = CollectionType \
     ),
     'decades': EntityInfo( \
         name = 'decades', \
-        struct_size_format = 'HI10s', \
+        struct_size_format = f'HI{SIZE_DECADE}s', \
         classtype = CollectionType \
     ),
     'titles': EntityInfo( \
         name = 'titles', \
-        struct_size_format = 'II80s', \
+        struct_size_format = f'II{SIZE_TITLE}s', \
         classtype = TitleType \
     ),
     'movies': EntityInfo( \

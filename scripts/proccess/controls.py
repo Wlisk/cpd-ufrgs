@@ -2,6 +2,8 @@
 from typing import Callable, Final
 # const imports
 from scripts.config import MIN_VOTES, MIN_VOTES_COUNT, MAX_TITLE_SIZE
+from scripts.io.controls import \
+    SIZE_GENRE, SIZE_COUNTRY, SIZE_COMPANY, SIZE_DECADE
 # module imports
 from scripts.utils \
     import parse_get_names, parse_get_year, parse_int, parse_float
@@ -34,11 +36,11 @@ FILTERS: Final[ dict[str, Callable[[str], bool]] ] =  {
     'title':        lambda v: v and len(v) >= MAX_TITLE_SIZE,
     'release_date': lambda v: v and not ('-' in v),
     'genres': \
-        lambda v: v and (len(v) == 0 or type(v) != str or len(v) <= 29),
+        lambda v: v and (len(v) == 0 or type(v) != str),
     'production_countries': \
-        lambda v: v and (len(v) == 0 or type(v) != str or len(v) <= 49),
+        lambda v: v and (len(v) == 0 or type(v) != str),
     'production_companies': \
-        lambda v: v and (len(v) == 0 or type(v) != str or len(v) <= 49)
+        lambda v: v and (len(v) == 0 or type(v) != str)
 }
 
 # used to rename a column from the movie dictionary
@@ -60,3 +62,13 @@ PROCCESS: Final[ dict[str, Callable[[str], int|float|list[str]]] ] = {
     'duration':     parse_float,
     'rating':       parse_float
 } 
+
+# second filter to be used after executing PROCCESS
+# used to skip a movie if the conditions are met 
+SND_FILTERS: Final[ dict[str, Callable[[list[str]], bool]] ] = { \
+    'genres': lambda l: any(len(v) >= (SIZE_GENRE-2) for v in l), \
+    'companies': \
+        lambda l: any(len(v) >= (SIZE_COUNTRY-2) for v in l), \
+    'countries': \
+        lambda l: any(len(v) >= (SIZE_COMPANY-2) for v in l), \
+}

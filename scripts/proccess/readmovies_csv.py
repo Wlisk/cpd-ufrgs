@@ -5,13 +5,14 @@ from scripts.types import MovieBaseDict
 from csv import DictReader
 # const imports   
 from scripts.proccess.controls \
-    import FILTERS, IGNORE_COLUMNS, RENAME_COL, PROCCESS
+    import FILTERS, IGNORE_COLUMNS, RENAME_COL, PROCCESS, SND_FILTERS
 
 # Generator to loop through a list of movies
 def readmovies_csv(csvfilename: str) -> Generator[MovieBaseDict, None, None]:
     with open(csvfilename, 'r') as csvrfile:
         # read csv as a list of dictionaries
         csvreader = DictReader(csvrfile)
+        allowed_langs = ['en', 'es', 'pt', 'it']
         
         # iterate through every row on the csv to get the movies data
         for csvrow in csvreader:
@@ -29,6 +30,11 @@ def readmovies_csv(csvfilename: str) -> Generator[MovieBaseDict, None, None]:
                 if filters_check or filters_check is None:
                     skip = True
                     break
+                
+                if colname == 'original_language':
+                    if value not in allowed_langs:
+                        skip = True
+                        break
 
                 # jump to other column if column name in ignore list
                 if colname in IGNORE_COLUMNS: continue
@@ -39,8 +45,17 @@ def readmovies_csv(csvfilename: str) -> Generator[MovieBaseDict, None, None]:
 
                 # proccess the data of the column if exists a funtion for this
                 # otherwise execute a return-same-value function
-                movie[newcolname] = \
-                    PROCCESS.get(newcolname, lambda v: v)(csvrow[colname])
+                data = PROCCESS.get(newcolname, lambda v: v)(value)
+                
+                # if newcolname equal genres, countries or company then
+                # check if any of then has valid values
+                #print("we are here", newcolname, data, '\n')
+                filters_check = SND_FILTERS.get(newcolname, lambda v: False)(data)
+                if filters_check:
+                    skip = True
+                    break
+
+                movie[newcolname] = data
 
             # jump row if row match any filters
             if skip: continue

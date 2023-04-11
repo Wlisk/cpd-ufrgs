@@ -92,10 +92,13 @@ class GraphicInterface:
         self.show_result(skip=True)
 
     def load_csv_fn(self):
+        self.text_result.config(state='normal') 
         self.text_result.delete('1.0', tk.END) 
-        proccess_csv(self.text_result)
+        self.text_result.insert(tk.END, "CSV loading...\n")
+        proccess_csv(self)
         self.create_widgets()
         self.text_result.insert(tk.END, "CSV loaded with success!")
+        self.text_result.config(state='disabled') 
 
     def create_widgets(self):
         ##############################################

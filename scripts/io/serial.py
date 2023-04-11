@@ -28,10 +28,12 @@ class Serial(IOBase):
         # get item by item from the data read 
         # and create a list with them
         if len(data) == 0: return []
-        return [\
-            self._classtype.make(item).normalize() \
-            for item in iter_unpack(self._entity.struct_format, data) \
-        ]
+
+        _list = []
+        for item in iter_unpack(self._entity.struct_format, data):
+            _list.append( self._classtype.make(item).normalize() )
+            
+        return _list
 
     # write an item at the end of the entity file
     # and return its position

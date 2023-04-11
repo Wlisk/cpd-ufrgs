@@ -1,12 +1,12 @@
 # type imports 
-from tkinter import Text, END
+from tkinter import END
 # module imports
 from tkinter.filedialog import askopenfilename
 from scripts.binaries.binaries import generate_binaries
 # const imports 
 from scripts.config import DATASETS_DIR
 
-def proccess_csv(text: Text):
+def proccess_csv(self):
     filetypes = [('csv files', '*.csv')] 
 
     filename = askopenfilename( \
@@ -15,7 +15,7 @@ def proccess_csv(text: Text):
         filetypes=filetypes \
     )
 
-    text.insert(END, "CSV loading...")
-
     generate_binaries(filename)
+
+    
 

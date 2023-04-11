@@ -72,7 +72,7 @@ class Searcher:
         # load the collections data
         self.data_genres    = self.stream_genres.read_all()
         self.data_decades   = self.stream_decades.read_all()
-        self.data_countries = self.stream_countries.read_all
+        self.data_countries = self.stream_countries.read_all()
         self.data_companies = self.stream_companies.read_all()
 
     # close all streams
@@ -81,6 +81,7 @@ class Searcher:
 
     def search_collection(self, data_list:list[CollectionType], item: str, blocks: Blocks) -> list[tuple[int, TrieData]]:
         result_list = []
+        print(data_list)
         # verify if we have the decade passed
         item_found: CollectionType = found_in_entity(\
             data_list, item, by_name \
